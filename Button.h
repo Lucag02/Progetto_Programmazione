@@ -15,7 +15,7 @@ private:
     sf::Text text;
     buttonStates btnState;
 public:
-    Button(float x, float y, float width, float height,const std::string& title,sf::Font* font);
+    Button(float x, float y, float width, float height, const std::string& title, const sf::Font &font);
     void update(const sf::Vector2f &mousePos);
     void render(sf::RenderTarget &target);
     bool isPressed();

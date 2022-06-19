@@ -3,11 +3,11 @@
 //
 
 #include "Button.h"
-Button::Button(float x, float y,float width, float height,const std::string& title,sf::Font* font) {
+Button::Button(float x, float y, float width, float height, const std::string& title, const sf::Font &font) {
     button.setPosition(sf::Vector2f(x,y));
     button.setSize(sf::Vector2f(width,height));
     text.setString(title);
-    text.setFont(*font);
+    text.setFont(font);
     text.setFillColor(sf::Color::White);
     text.setCharacterSize(20);
     text.setPosition(button.getPosition().x+(button.getGlobalBounds().width/2)-text.getGlobalBounds().width/2.f,
