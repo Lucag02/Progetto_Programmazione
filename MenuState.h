@@ -9,9 +9,9 @@
 #include "States.h"
 #include "Button.h"
 #include "DropDownMenu.h"
+#include "OptionState.h"
 class MenuState: public States{
 private:
-    std::unique_ptr<DropDownMenu> resolutionDDM;
     std::unique_ptr<Button> newGameBTN;
     std::unique_ptr<Button> quitBTN;
     std::unique_ptr<Button> optionsBTN;

@@ -3,6 +3,8 @@
 //
 
 #include "Button.h"
+
+#include <utility>
 Button::Button(float x, float y, float width, float height, const std::string& title, const sf::Font &font) {
     button.setPosition(sf::Vector2f(x,y));
     button.setSize(sf::Vector2f(width,height));
@@ -38,4 +40,26 @@ bool Button::isPressed() {
         return true;
     return false;
 }
+
+void Button::setText(const sf::Text &title) {
+    text=title;
+}
+
+sf::Text Button::getText() {
+    return text;
+}
+
+void Button::setTextPos(float x, float y) {
+    text.setPosition(x,y);
+}
+
+const sf::Vector2f &Button::getTextPos() {
+    return text.getPosition();
+}
+
+
+
+
+
+
 

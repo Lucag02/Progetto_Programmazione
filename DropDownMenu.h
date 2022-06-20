@@ -5,12 +5,11 @@
 #ifndef PROGETTO_PROGRAMMAZIONE_DROPDOWNMENU_H
 #define PROGETTO_PROGRAMMAZIONE_DROPDOWNMENU_H
 #include "Button.h"
-enum Type{RESOLUTION};
 class DropDownMenu {
 public:
     DropDownMenu(float x, float y, float width, float height, const std::string &title, sf::Font &font,
-                 int elements, Type type);
-    void update(const float &dt, const sf::Vector2f &mousePos);
+                 std::vector<std::string> list);
+    void update(const sf::Vector2f &mousePos, const float &dt);
     void render(sf::RenderTarget &target);
 private:
     bool open;
@@ -18,10 +17,12 @@ private:
     float y;
     float height;
     float width;
-    int numElements;
+    float time;
     sf::Font &font;
-    Type type;
-    std::unique_ptr<Button> BTN;
+    std::vector<std::string> titleList;
+    std::vector<Button> buttonList;
+    Button activeBTN;
+    //std::unique_ptr<Button> activeBTN;
 };
 
 

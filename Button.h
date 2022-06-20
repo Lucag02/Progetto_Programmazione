@@ -16,6 +16,10 @@ private:
     buttonStates btnState;
 public:
     Button(float x, float y, float width, float height, const std::string& title, const sf::Font &font);
+    void setText(const sf::Text &title);
+    sf::Text getText();
+    void setTextPos(float x, float y);
+    const sf::Vector2f& getTextPos();
     void update(const sf::Vector2f &mousePos);
     void render(sf::RenderTarget &target);
     bool isPressed();

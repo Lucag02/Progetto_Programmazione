@@ -22,7 +22,7 @@ public:
     ~Game();
 
 private:
-    sf::RenderWindow *window;
+    sf::RenderWindow* window;
     std::stack <std::unique_ptr<States>> states;
     sf::Event event;
     sf::Clock clock;

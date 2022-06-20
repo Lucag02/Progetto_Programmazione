@@ -37,7 +37,7 @@ void Game::initWindow() {
         ifs >> vsync;
     }
     ifs.close();
-    window = new sf::RenderWindow(sf::VideoMode(windowBounds), title);
+    window =new sf::RenderWindow(sf::VideoMode(windowBounds), title);
     //window->setSize(sf::Vector2u(1600,900));
     window->setFramerateLimit(framerateLimit);
     window->setVerticalSyncEnabled(vsync);
