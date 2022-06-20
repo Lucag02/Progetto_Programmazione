@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 project(Progetto_Programmazione)
 
 set(CMAKE_CXX_STANDARD 14)
-set(SOURCE_FILES main.cpp Game.cpp Game.h States.cpp States.h MenuState.cpp MenuState.h Button.cpp Button.h DropDownMenu.cpp DropDownMenu.h OptionState.cpp OptionState.h)
+set(SOURCE_FILES main.cpp Game.cpp Game.h States.cpp States.h MenuState.cpp MenuState.h Button.cpp Button.h DropDownMenu.cpp DropDownMenu.h OptionState.cpp OptionState.h Checkbox.cpp Checkbox.h)
 add_executable(Progetto_Programmazione main.cpp)
 add_library(core ${SOURCE_FILES})
 target_link_libraries(core sfml-system sfml-window sfml-graphics sfml-audio)

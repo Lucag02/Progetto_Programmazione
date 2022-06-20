@@ -8,9 +8,10 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-enum buttonStates {IDLE,PRESSED,HOVER};
+
 class Button {
-private:
+protected:
+    enum buttonStates {IDLE,PRESSED,HOVER};
     sf::RectangleShape button;
     sf::Text text;
     buttonStates btnState;

@@ -4,7 +4,6 @@
 
 #include "Button.h"
 
-#include <utility>
 Button::Button(float x, float y, float width, float height, const std::string& title, const sf::Font &font) {
     button.setPosition(sf::Vector2f(x,y));
     button.setSize(sf::Vector2f(width,height));
