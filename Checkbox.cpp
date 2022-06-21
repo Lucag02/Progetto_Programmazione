@@ -9,22 +9,21 @@ Checkbox::Checkbox() {
 
 }
 
-Checkbox::Checkbox(float x, float y) : checked(true), pressed(false), timer(0) {
+Checkbox::Checkbox(float x, float y, float size, bool checked) : checked(checked),timer(0) {
     this->setPosition(x,y);
     this->setOutlineThickness(8);
     this->setOutlineColor(sf::Color(210,70,70));
-    this->setSize(sf::Vector2f(50,50));
+    this->setSize(sf::Vector2f(size,size));
     if(!checkTexture.loadFromFile("../Resources/check.png"))
         std::cout<<"Could not load texture"<<"\n";
     this->setTexture(&checkTexture);
 }
 
-bool Checkbox::isPressed() const {
-    return pressed;
+bool Checkbox::isChecked() const {
+    return checked;
 }
 
 void Checkbox::update(const sf::Vector2f &mousePos, const float &dt) {
-    pressed=false;
     timer+=dt;
     if(checked) {
         this->setTexture(&checkTexture);
@@ -36,7 +35,6 @@ void Checkbox::update(const sf::Vector2f &mousePos, const float &dt) {
     }
     if(timer>0.3&&this->getGlobalBounds().contains(mousePos)&&sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         checked = (checked + 1) % 2;
-        pressed = true;
         timer=0;
     }
 }

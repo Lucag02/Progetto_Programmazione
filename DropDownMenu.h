@@ -11,6 +11,7 @@ public:
                  std::vector<std::string> list);
     void update(const sf::Vector2f &mousePos, const float &dt);
     void render(sf::RenderTarget &target);
+    std::string getActiveString();
 private:
     bool open;
     float x;
@@ -22,7 +23,6 @@ private:
     std::vector<std::string> titleList;
     std::vector<Button> buttonList;
     Button activeBTN;
-    //std::unique_ptr<Button> activeBTN;
 };
 
 

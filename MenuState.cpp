@@ -5,8 +5,7 @@
 #include "MenuState.h"
 MenuState::MenuState(std::stack<std::unique_ptr<States>>* states, sf::RenderWindow* w){
     window=w;
-    background.setSize(sf::Vector2f(static_cast<float>(window->getSize().x),
-                                    static_cast<float>(window->getSize().y)));
+    background.setSize(sf::Vector2f(800,450));
     if(!backgroundTexture.loadFromFile("../Resources/background.jpeg"))
         std::cout<<"couldn't load background.jpeg"<<"\n";
     background.setTexture(&backgroundTexture);
@@ -26,11 +25,12 @@ void MenuState::update(const float &dt) {
     newGameBTN->update(mousePos);
     quitBTN->update(mousePos);
     optionsBTN->update(mousePos);
+    if(optionsBTN->isPressed()) {
+        states->push(std::make_unique<OptionState>(states,window));
+    }
     if(quitBTN->isPressed()) {
         window->close();
     }
-    if(optionsBTN->isPressed())
-        states->push(std::make_unique<OptionState>(states,window));
 }
 
 void MenuState::render(sf::RenderTarget &target) {

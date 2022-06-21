@@ -26,19 +26,25 @@ void Game::run() {
 
 void Game::initWindow() {
     std::ifstream ifs("../Config/window.ini");
-    std::string title = "COMclone";
-    sf::VideoMode windowBounds=sf::VideoMode::getDesktopMode();
+    std::string title = "Progetto_Programmazione";
+    sf::Vector2u windowBounds;
     unsigned framerateLimit = 144;
     bool vsync = true;
+    bool fullscreen=false;
     if (ifs.is_open()) {
         std::getline(ifs, title);
-        ifs >> windowBounds.width >> windowBounds.height;
+        ifs >> windowBounds.x >> windowBounds.y;
         ifs >> framerateLimit;
         ifs >> vsync;
+        ifs >> fullscreen;
     }
     ifs.close();
-    window =new sf::RenderWindow(sf::VideoMode(windowBounds), title);
-    //window->setSize(sf::Vector2u(1600,900));
+    window =new sf::RenderWindow(sf::VideoMode(800,450), title);
+
+    if(fullscreen)
+        window->create(sf::VideoMode(), title,sf::Style::Fullscreen);
+    else
+        window->setSize(windowBounds);
     window->setFramerateLimit(framerateLimit);
     window->setVerticalSyncEnabled(vsync);
 }
