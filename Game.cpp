@@ -30,21 +30,15 @@ void Game::initWindow() {
     sf::Vector2u windowBounds;
     unsigned framerateLimit = 144;
     bool vsync = true;
-    bool fullscreen=false;
     if (ifs.is_open()) {
         std::getline(ifs, title);
         ifs >> windowBounds.x >> windowBounds.y;
         ifs >> framerateLimit;
         ifs >> vsync;
-        ifs >> fullscreen;
     }
     ifs.close();
     window =new sf::RenderWindow(sf::VideoMode(800,450), title);
-
-    if(fullscreen)
-        window->create(sf::VideoMode(), title,sf::Style::Fullscreen);
-    else
-        window->setSize(windowBounds);
+    window->setSize(windowBounds);
     window->setFramerateLimit(framerateLimit);
     window->setVerticalSyncEnabled(vsync);
 }

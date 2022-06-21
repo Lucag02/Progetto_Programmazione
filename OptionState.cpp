@@ -36,7 +36,7 @@ OptionState::OptionState(std::stack<std::unique_ptr<States>> *states, sf::Render
     file>>tmp;
     title.append(tmp);
     std::vector<std::string> titleList={"1920 x 1080", "1600 x 900","800 x 450"};
-    resolutionDDM=std::make_unique<DropDownMenu>(450.f,275.f,150.f,50.f,title,font,titleList);
+    resolutionDDM=std::make_unique<DropDownMenu>(450.f,285.f,150.f,35.f,title,font,titleList);
     bool checked;
     goToLine(file,4);
     file>>checked;
