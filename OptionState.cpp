@@ -10,6 +10,7 @@ OptionState::OptionState(std::stack<std::unique_ptr<States>> *states, sf::Render
     this->states=states;
     background.setSize(sf::Vector2f(800.f,450.f));
     if(!backgroundTexture.loadFromFile("../Resources/background.jpeg"))
+        //TODO handle exceptions
         std::cout<<"couldn't load background.jpeg"<<"\n";
     background.setTexture(&backgroundTexture);
     if(!font.loadFromFile("../Config/ComicSans.ttf"))

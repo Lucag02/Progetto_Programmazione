@@ -3,5 +3,6 @@
 //
 
 #include "GameCharacter.h"
-GameCharacter::GameCharacter(int HP, int m, float x, float y, float movespeed, float manaregen):
-        hp(HP),mana(m),moveSpeed(movespeed),manaRegen(manaregen){}
+GameCharacter::GameCharacter(const ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
+                             float manaregen) :
+        hp(HP),mana(m),moveSpeed(movespeed),manaRegen(manaregen),resources(resources){}

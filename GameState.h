@@ -6,10 +6,13 @@
 #define PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
 #include "States.h"
 #include "PlayableCharacter.h"
+#include "ResourceManager.h"
 class GameState: public States {
 private:
     sf::View view;
-    PlayableCharacter player;
+    std::unique_ptr<PlayableCharacter> player;
+    ResourceManager playerResources;
+    void loadTextures();
 public:
     GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow* w);
     void update(const float& dt) override;

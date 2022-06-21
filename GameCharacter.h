@@ -8,16 +8,19 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include "ResourceManager.h"
 
 class GameCharacter {
 protected:
-    sf::Sprite* sprite;
+    sf::Sprite sprite;
     float moveSpeed;
     int hp;
     int mana;
     float manaRegen;
+    const ResourceManager& resources;
 public:
-    explicit GameCharacter(int HP=10,int m=0,float x=0, float y=0,float movespeed=100,float manaregen=2);
+    explicit GameCharacter(const ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
+                           float manaregen);
     virtual void update(const float& dt)=0;
     virtual void render(sf::RenderTarget &target)=0;
     virtual ~GameCharacter()=default;

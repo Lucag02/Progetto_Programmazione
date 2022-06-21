@@ -4,9 +4,11 @@
 
 #include "MenuState.h"
 MenuState::MenuState(std::stack<std::unique_ptr<States>>* states, sf::RenderWindow* w){
+    //TODO fix menu not rendering whne changing view
     window=w;
     background.setSize(sf::Vector2f(800,450));
     if(!backgroundTexture.loadFromFile("../Resources/background.jpeg"))
+        //TODO handle exceptions
         std::cout<<"couldn't load background.jpeg"<<"\n";
     background.setTexture(&backgroundTexture);
     if(!font.loadFromFile("../Config/ComicSans.ttf"))
@@ -25,10 +27,12 @@ void MenuState::update(const float &dt) {
     newGameBTN->update(mousePos);
     quitBTN->update(mousePos);
     optionsBTN->update(mousePos);
-    if(optionsBTN->isPressed()) {
+    if(newGameBTN->isPressed())
+        states->push(std::make_unique<GameState>(states,window));
+    else if(optionsBTN->isPressed()) {
         states->push(std::make_unique<OptionState>(states,window));
     }
-    if(quitBTN->isPressed()) {
+    else if(quitBTN->isPressed()) {
         window->close();
     }
 }
