@@ -12,7 +12,7 @@ Animation::Animation(int startX, int startY, int endX, int endY, int widthOfFram
         currentRect(startRect), timer(0), animationTimer(animationTimer),
         width(widthOfFrame), height(heightOfFrame){}
 
-void Animation::play(const float &dt, sf::Sprite &sprite) {
+void Animation::play(const float &dt, sf::Sprite &sprite){
     timer+=1000*dt;
     if(timer>=animationTimer)
     {
@@ -23,4 +23,9 @@ void Animation::play(const float &dt, sf::Sprite &sprite) {
             currentRect.left = startRect.left;
         sprite.setTextureRect(currentRect);
     }
+}
+bool Animation::isPlaying() const {
+    if (currentRect.left == startRect.left)
+        return false;
+    return true;
 }

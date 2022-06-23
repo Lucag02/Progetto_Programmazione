@@ -17,6 +17,7 @@ public:
     void addAnimation(const std::string &AnimationName, int width, int height, int startX,
                       int startY, int endX, int endY,float animationTimer);
     void playAnimation(const std::string& name, const float& dt,sf::Sprite& sprite);
+    const Animation& getAnimation(const std::string& animationName);
 };
 
 #endif //PROGETTO_PROGRAMMAZIONE_RESOURCEMANAGER_H

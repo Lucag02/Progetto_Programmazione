@@ -13,8 +13,11 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
 
 void GameState::update(const float &dt) {
     player->update(dt);
+    if(player->isAnimationLocked()&&!player->isAnimationPlaying())
+        player->setAnimationLock(false);
     view.setCenter(player->getPosition());
     window->setView(view);
+
 }
 
 void GameState::render(sf::RenderTarget &target) {

@@ -22,6 +22,7 @@ public:
     Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame, sf::Texture &texture,
               float animationTimer);
     void play(const float &dt,sf::Sprite& sprite);
+    bool isPlaying() const;
 };
 
 

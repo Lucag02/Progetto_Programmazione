@@ -17,9 +17,9 @@ protected:
     int hp;
     int mana;
     float manaRegen;
-    const ResourceManager& resources;
+    ResourceManager& resources;
 public:
-    explicit GameCharacter(const ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
+    explicit GameCharacter( ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
                            float manaregen);
     virtual void update(const float& dt)=0;
     virtual void render(sf::RenderTarget &target)=0;

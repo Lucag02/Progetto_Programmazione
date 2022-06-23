@@ -8,12 +8,20 @@
 
 class PlayableCharacter: public GameCharacter{
 public:
-    sf::Vector2f getPosition();
-    explicit PlayableCharacter(const ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
+    explicit PlayableCharacter(ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
                                float movespeed = 1000, float manaregen = 2);
+    sf::Vector2f getPosition();
+    bool isAnimationLocked() const;
+    void setAnimationLock(bool lock);
+    bool isAnimationPlaying();
     void update(const float &dt) override;
     void render(sf::RenderTarget& target) override;
     ~PlayableCharacter() override;
+private:
+    bool animationLock;
+    bool hardLock;
+    std::string animation;
+    std::string lockAnimation;
 };
 
 

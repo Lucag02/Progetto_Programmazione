@@ -24,3 +24,7 @@ ResourceManager::addAnimation(const std::string &AnimationName, int width,
     animations.insert({AnimationName, Animation(startX, startY, endX, endY, width, height,
                                                 textures.at(AnimationName), animationTimer)});
 }
+
+const Animation &ResourceManager::getAnimation(const std::string &animationName) {
+    return animations.at(animationName);
+}
