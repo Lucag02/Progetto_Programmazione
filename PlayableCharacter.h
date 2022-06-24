@@ -9,13 +9,14 @@
 class PlayableCharacter: public GameCharacter{
 public:
     explicit PlayableCharacter(ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
-                               float movespeed = 1000, float manaregen = 2);
+                               float movespeed = 100, float manaregen = 2);
     sf::Vector2f getPosition();
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
     bool isAnimationPlaying();
     void update(const float &dt) override;
     void render(sf::RenderTarget& target) override;
+    void setPosition(float x, float y);
     ~PlayableCharacter() override;
 private:
     bool animationLock;

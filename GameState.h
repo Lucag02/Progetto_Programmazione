@@ -7,11 +7,14 @@
 #include "States.h"
 #include "PlayableCharacter.h"
 #include "ResourceManager.h"
+#include "Map.h"
 class GameState: public States {
 private:
     sf::View view;
     std::unique_ptr<PlayableCharacter> player;
+    std::unique_ptr<Map> map;
     ResourceManager playerResources;
+    ResourceManager mapResources;
     void loadTextures();
 public:
     GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow* w);

@@ -13,8 +13,8 @@ void ResourceManager::addTexture(const std::string& name,const std::string& file
         //TODO add exception handling
         std::cout<<"could not load texture"<<"\n";
 }
-const sf::Texture* ResourceManager::getTexture(const std::string& name) const{
-    return &textures.at(name);
+const sf::Texture& ResourceManager::getTexture(const std::string& name) const{
+    return textures.at(name);
 }
 
 void
