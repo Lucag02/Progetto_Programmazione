@@ -4,6 +4,7 @@
 
 #ifndef PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
 #define PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
+#include <sstream>
 #include "States.h"
 #include "PlayableCharacter.h"
 #include "ResourceManager.h"
@@ -13,6 +14,7 @@ private:
     sf::View view;
     std::unique_ptr<PlayableCharacter> player;
     std::unique_ptr<Map> map;
+    std::vector<Enemy> enemies;
     ResourceManager playerResources;
     ResourceManager mapResources;
     void loadTextures();

@@ -9,9 +9,8 @@
 class PlayableCharacter: public GameCharacter{
 public:
     explicit PlayableCharacter(ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
-                               float movespeed = 100, float manaregen = 2);
+                               float movespeed = 150, float manaregen = 2);
 
-    sf::Vector2f getPosition();
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
     bool isAnimationPlaying();
@@ -19,8 +18,8 @@ public:
     void render(sf::RenderTarget& target) override;
     void setPosition(float x, float y);
     ~PlayableCharacter() override;
+    sf::Vector2f getPosition();
 private:
-    std::unique_ptr<Hitbox> hitbox;
     bool animationLock;
     bool hardLock;
     std::string animation;

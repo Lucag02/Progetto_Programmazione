@@ -4,10 +4,12 @@
 
 #ifndef PROGETTO_PROGRAMMAZIONE_MAP_H
 #define PROGETTO_PROGRAMMAZIONE_MAP_H
+#include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <ctime>
 #include <vector>
 #include "PlayableCharacter.h"
+#include "Enemy.h"
 class Map {
 private:
     class Room {
@@ -20,7 +22,6 @@ private:
         int width;
         int height;
     };
-    PlayableCharacter& player;
     int roomQuantity;
     int tileWidth;
     int tileHeight;
@@ -30,8 +31,11 @@ private:
     std::vector<std::vector<sf::RectangleShape>> map;
     int sizeX;
     int sizeY;
+    std::vector<Enemy>& enemies;
+    PlayableCharacter& player;
 public:
-    Map(const sf::Texture &texture, PlayableCharacter &player);
+    explicit Map(const sf::Texture &texture, PlayableCharacter &player, std::vector<Enemy> & enemies);
+    void update();
     void render(sf::RenderTarget &target);
     void createMap();
     void placeRooms();

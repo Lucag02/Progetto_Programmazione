@@ -5,7 +5,7 @@
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
                                      float manaregen) : GameCharacter(resources,HP, m, x, y, movespeed, manaregen),
                                      animationLock(false), hardLock(false){
-    moveSpeed=1000;
+    //moveSpeed=1000;
     sprite=sf::Sprite(resources.getTexture("IDLE_ANIMATION"));
     sprite.setTextureRect(sf::IntRect(0,0,120,80));
     sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
@@ -21,6 +21,7 @@ void PlayableCharacter::update(const float &dt) {
             animationLock = true;
             hardLock=true;
         } else{
+            prevPos=sprite.getPosition();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                 sprite.move(-1 * dt * moveSpeed, 0);
                 animation = "RUN_ANIMATION";
@@ -49,6 +50,7 @@ void PlayableCharacter::update(const float &dt) {
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
                 sprite.move(0, -1 * dt * moveSpeed);
+
                 animation = "RUN_ANIMATION";
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
                     lockAnimation = "ROLL_ANIMATION";
@@ -65,16 +67,13 @@ void PlayableCharacter::update(const float &dt) {
 
 void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
-    target.draw(*hitbox);
+    //target.draw(*hitbox);
 }
 
 PlayableCharacter::~PlayableCharacter() {
 
 }
 
-sf::Vector2f PlayableCharacter::getPosition() {
-    return sprite.getPosition();
-}
 
 bool PlayableCharacter::isAnimationLocked() const {
     return animationLock;
@@ -91,5 +90,9 @@ bool PlayableCharacter::isAnimationPlaying() {
 
 void PlayableCharacter::setPosition(float x, float y) {
     sprite.setPosition(x,y);
+}
+
+sf::Vector2f PlayableCharacter::getPosition() {
+    return sprite.getPosition();
 }
 

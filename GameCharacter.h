@@ -9,18 +9,23 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "ResourceManager.h"
+#include "Hitbox.h"
 
 class GameCharacter {
 protected:
+    std::unique_ptr<Hitbox> hitbox;
     sf::Sprite sprite;
     float moveSpeed;
     int hp;
     int mana;
     float manaRegen;
     ResourceManager& resources;
+    sf::Vector2f prevPos;
 public:
-    explicit GameCharacter( ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
-                           float manaregen);
+    explicit GameCharacter(ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
+                           float movespeed = 100, float manaregen = 2);
+    Hitbox & getHitbox();
+    void undoMove();
     virtual void update(const float& dt)=0;
     virtual void render(sf::RenderTarget &target)=0;
     virtual ~GameCharacter()=default;

@@ -2,15 +2,35 @@
 // Created by luca on 24/06/22.
 //
 
+#include <SFML/Graphics/Texture.hpp>
 #include "Map.h"
 
-Map::Map(const sf::Texture &texture, PlayableCharacter &player):
-        texture(texture), tileHeight(32), tileWidth(32),sizeX(500), sizeY(100), roomQuantity(20), player(player){
+Map::Map(const sf::Texture &texture, PlayableCharacter &player, std::vector<Enemy> & enemies) :player(player),enemies(enemies),
+        texture(texture), tileHeight(32), tileWidth(32),sizeX(500), sizeY(100), roomQuantity(20){
     tiles["VOID"]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
     tiles["GRASS"]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
     tiles["TERRAIN"]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
     tiles["WALL"]=sf::IntRect (4*tileWidth,16*tileHeight,tileWidth,tileHeight);
     createMap();
+}
+
+void Map::update() {
+    sf::Vector2f pos,size;
+    Hitbox hitbox=player.getHitbox();
+    pos=hitbox.getPosition();
+    pos.x/=tileWidth;
+    pos.y/=tileHeight;
+    size=hitbox.getSize();
+    size.x/=tileWidth;
+    size.y/=tileHeight;
+    /*for(int i=0;i<=size.x;i++)
+        for(int j=0;j<=size.y;j++)
+            if(map[pos.x+i][pos.y+j].getTextureRect()==tiles.at("WALL")&&hitbox.intersects(
+                    sf::FloatRect((pos.x+i) * tileWidth,(pos.y+j) *
+                    tileHeight,tileWidth,tileHeight))) {*/
+     if(map[pos.x][pos.y].getTextureRect()==tiles.at("WALL")||map[pos.x+size.x][pos.y].getTextureRect()==tiles.at("WALL")||
+             map[pos.x][pos.y+size.y].getTextureRect()==tiles.at("WALL")||map[pos.x+size.x][pos.y+size.y].getTextureRect()==tiles.at("WALL"))
+         player.undoMove();
 }
 
 void Map::render(sf::RenderTarget &target) {
@@ -61,7 +81,6 @@ void Map::createMap() {
     }
     placeRooms();
 }
-
 void Map::placeRooms() {
     srand((unsigned int)time(nullptr));
     int roomMinSize=12;
@@ -98,6 +117,7 @@ void Map::placeRooms() {
             i--;
     }
 }
+
 void Map::createCorridors(const Room &room1, const Room &room2) {
     if(abs(room1.getCenter().x-room2.getCenter().x)>100)
         return;
@@ -139,7 +159,6 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
             map[endX + 2][i].setTextureRect(tiles.at("WALL"));
     }
 }
-
 
 Map::Room::Room(int width, int height, int x, int y):
         topLeftCoordinates(x,y), width(width),height(height){}

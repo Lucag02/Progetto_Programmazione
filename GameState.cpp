@@ -9,14 +9,14 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
     this->states=states;
     loadTextures();
     player=std::make_unique<PlayableCharacter>(playerResources);
-    map=std::make_unique<Map>(mapResources.getTexture("TILES"),*player);
+    map=std::make_unique<Map>(mapResources.getTexture("TILES"),*player,enemies);
 }
 
 void GameState::update(const float &dt) {
     player->update(dt);
     if(player->isAnimationLocked()&&!player->isAnimationPlaying())
         player->setAnimationLock(false);
-
+    map->update();
 }
 
 void GameState::render(sf::RenderTarget &target) {
@@ -24,6 +24,17 @@ void GameState::render(sf::RenderTarget &target) {
     view.setCenter(player->getPosition());
     window->setView(view);
     player->render(target);
+    updateMousePos();
+    sf::Text mousePosText;
+    sf::Font font;
+    font.loadFromFile("../Config/ComicSans.ttf");
+    mousePosText.setFont(font);
+    mousePosText.setCharacterSize(15);
+    mousePosText.setPosition(mousePos.x,mousePos.y-25);
+    std::stringstream ss;
+    ss<<mousePos.x<<"  "<<mousePos.y;
+    mousePosText.setString(ss.str());
+    window->draw(mousePosText);
 }
 
 void GameState::loadTextures() {
