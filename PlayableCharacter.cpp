@@ -10,6 +10,7 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, int HP, int m, 
     sprite.setTextureRect(sf::IntRect(0,0,120,80));
     sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
     sprite.setPosition(sf::Vector2f(x,y));
+    hitbox= std::make_unique<Hitbox>(sprite,20.f,37.f,false,10,-3);
 }
 
 void PlayableCharacter::update(const float &dt) {
@@ -58,11 +59,13 @@ void PlayableCharacter::update(const float &dt) {
     }
     if(animationLock)
         animation=lockAnimation;
+    hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(), sprite.getPosition().y - hitbox->getOffsetY());
     resources.playAnimation(animation,dt,sprite);
 }
 
 void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
+    target.draw(*hitbox);
 }
 
 PlayableCharacter::~PlayableCharacter() {
@@ -89,3 +92,4 @@ bool PlayableCharacter::isAnimationPlaying() {
 void PlayableCharacter::setPosition(float x, float y) {
     sprite.setPosition(x,y);
 }
+

@@ -50,6 +50,7 @@ void OptionState::update(const float &dt) {
     back->update(mousePos);
     resolutionDDM->update(mousePos,dt);
     vsyncCB.update(mousePos, dt);
+    //FIXME vsync makes the game stutter
     if(apply->isPressed()){
         goToLine(file, 4);
         if(vsyncCB.isChecked()) {

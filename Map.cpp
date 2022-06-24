@@ -139,6 +139,8 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
             map[endX + 2][i].setTextureRect(tiles.at("WALL"));
     }
 }
+
+
 Map::Room::Room(int width, int height, int x, int y):
         topLeftCoordinates(x,y), width(width),height(height){}
 

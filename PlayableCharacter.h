@@ -5,11 +5,12 @@
 #ifndef PROGETTO_PROGRAMMAZIONE_PLAYABLECHARACTER_H
 #define PROGETTO_PROGRAMMAZIONE_PLAYABLECHARACTER_H
 #include "GameCharacter.h"
-
+#include "Hitbox.h"
 class PlayableCharacter: public GameCharacter{
 public:
     explicit PlayableCharacter(ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
                                float movespeed = 100, float manaregen = 2);
+
     sf::Vector2f getPosition();
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
@@ -19,6 +20,7 @@ public:
     void setPosition(float x, float y);
     ~PlayableCharacter() override;
 private:
+    std::unique_ptr<Hitbox> hitbox;
     bool animationLock;
     bool hardLock;
     std::string animation;
