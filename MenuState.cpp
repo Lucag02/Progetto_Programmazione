@@ -4,7 +4,6 @@
 
 #include "MenuState.h"
 MenuState::MenuState(std::stack<std::unique_ptr<States>>* states, sf::RenderWindow* w){
-    //TODO fix menu not rendering whne changing view
     window=w;
     background.setSize(sf::Vector2f(800,450));
     if(!backgroundTexture.loadFromFile("../Resources/background.jpeg"))
@@ -23,6 +22,9 @@ MenuState::MenuState(std::stack<std::unique_ptr<States>>* states, sf::RenderWind
 }
 
 void MenuState::update(const float &dt) {
+    sf::View view=window->getView();
+    view.setCenter(view.getSize().x/2,view.getSize().y/2);
+    window->setView(view);
     updateMousePos();
     newGameBTN->update(mousePos);
     quitBTN->update(mousePos);
