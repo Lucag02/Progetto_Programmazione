@@ -31,10 +31,12 @@ private:
     std::vector<std::vector<sf::RectangleShape>> map;
     int sizeX;
     int sizeY;
-    std::vector<Enemy>& enemies;
+    std::vector<std::unique_ptr<Enemy>>& enemies;
     PlayableCharacter& player;
+    ResourceManager& enemyResources;
 public:
-    explicit Map(const sf::Texture &texture, PlayableCharacter &player, std::vector<Enemy> & enemies);
+    Map(const sf::Texture &texture, ResourceManager &enemyResources, PlayableCharacter &player,
+                 std::vector<std::unique_ptr<Enemy>> &enemies);
     void update();
     void render(sf::RenderTarget &target);
     void createMap();

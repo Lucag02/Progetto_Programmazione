@@ -5,8 +5,10 @@
 #include <SFML/Graphics/Texture.hpp>
 #include "Map.h"
 
-Map::Map(const sf::Texture &texture, PlayableCharacter &player, std::vector<Enemy> & enemies) :player(player),enemies(enemies),
-        texture(texture), tileHeight(32), tileWidth(32),sizeX(500), sizeY(100), roomQuantity(20){
+Map::Map(const sf::Texture &texture, ResourceManager &enemyResources, PlayableCharacter &player,
+         std::vector<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
+                                                         tileHeight(32), tileWidth(32), sizeX(500), sizeY(100), roomQuantity(20), enemyResources(enemyResources){
+    //TODO maybe use enum for tiles
     tiles["VOID"]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
     tiles["GRASS"]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
     tiles["TERRAIN"]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
@@ -23,11 +25,6 @@ void Map::update() {
     size=hitbox.getSize();
     size.x/=tileWidth;
     size.y/=tileHeight;
-    /*for(int i=0;i<=size.x;i++)
-        for(int j=0;j<=size.y;j++)
-            if(map[pos.x+i][pos.y+j].getTextureRect()==tiles.at("WALL")&&hitbox.intersects(
-                    sf::FloatRect((pos.x+i) * tileWidth,(pos.y+j) *
-                    tileHeight,tileWidth,tileHeight))) {*/
      if(map[pos.x][pos.y].getTextureRect()==tiles.at("WALL")||map[pos.x+size.x][pos.y].getTextureRect()==tiles.at("WALL")||
              map[pos.x][pos.y+size.y].getTextureRect()==tiles.at("WALL")||map[pos.x+size.x][pos.y+size.y].getTextureRect()==tiles.at("WALL"))
          player.undoMove();
@@ -107,8 +104,12 @@ void Map::placeRooms() {
                         if (map[j][k].getTextureRect() != tiles.at("TERRAIN"))
                             map[j][k].setTextureRect(tiles.at("WALL"));
                     }
-                    else
+                    else {
                         map[j][k].setTextureRect(tiles.at("TERRAIN"));
+                        if(rand()%30==1)
+                            enemies.emplace_back(std::make_unique<Enemy>(
+                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2));
+                    }
             for(auto & j : rooms)
                 createCorridors(room,j);
             rooms.push_back(room);

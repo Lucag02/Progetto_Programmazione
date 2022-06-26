@@ -18,7 +18,6 @@ void Game::run() {
             states.top()->render(*window);
             window->display();
             dt = clock.getElapsedTime().asSeconds();
-            //std::cout<<dt<<"\n";
         } else
             window->close();
     }

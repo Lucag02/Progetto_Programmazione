@@ -19,11 +19,11 @@ protected:
     int hp;
     int mana;
     float manaRegen;
-    ResourceManager& resources;
+    ResourceManager resources;
     sf::Vector2f prevPos;
 public:
-    explicit GameCharacter(ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
-                           float movespeed = 100, float manaregen = 2);
+    explicit GameCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 10, int m = 0,float movespeed = 100,
+                           float manaregen = 2);
     Hitbox & getHitbox();
     void undoMove();
     virtual void update(const float& dt)=0;

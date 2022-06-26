@@ -14,10 +14,12 @@ private:
     sf::View view;
     std::unique_ptr<PlayableCharacter> player;
     std::unique_ptr<Map> map;
-    std::vector<Enemy> enemies;
+    std::vector<std::unique_ptr<Enemy>> enemies;
     ResourceManager playerResources;
     ResourceManager mapResources;
+    ResourceManager enemyResources;
     void loadTextures();
+    float dT;
 public:
     GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow* w);
     void update(const float& dt) override;

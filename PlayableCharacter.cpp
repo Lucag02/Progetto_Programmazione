@@ -2,9 +2,9 @@
 // Created by luca on 21/06/22.
 //
 #include "PlayableCharacter.h"
-PlayableCharacter::PlayableCharacter(ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
-                                     float manaregen) : GameCharacter(resources,HP, m, x, y, movespeed, manaregen),
-                                     animationLock(false), hardLock(false){
+PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
+                                     float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
+                                                        animationLock(false), hardLock(false){
     //moveSpeed=1000;
     sprite=sf::Sprite(resources.getTexture("IDLE_ANIMATION"));
     sprite.setTextureRect(sf::IntRect(0,0,120,80));

@@ -18,10 +18,11 @@ private:
     float animationTimer;
     int width;
     int height;
+    const sf::Texture& texture;
 public:
-    Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame, sf::Texture &texture,
+    Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame, const sf::Texture &texture,
               float animationTimer);
-    void play(const float &dt,sf::Sprite& sprite);
+    void play(const float &dt, sf::Sprite &sprite);
     bool isPlaying() const;
 };
 

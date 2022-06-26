@@ -4,16 +4,17 @@
 
 #include "Animation.h"
 Animation::Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame,
-                     sf::Texture &texture, float animationTimer) :
+                     const sf::Texture &texture, float animationTimer) :texture(texture),
         startRect(sf::IntRect(startX*widthOfFrame, startY*heightOfFrame,
                               widthOfFrame, heightOfFrame)),
         endRect(sf::IntRect(endX*widthOfFrame, endY*heightOfFrame,
                             widthOfFrame, heightOfFrame)),
-        currentRect(startRect), timer(0), animationTimer(animationTimer),
-        width(widthOfFrame), height(heightOfFrame){}
+        currentRect(startRect), animationTimer(animationTimer),
+        width(widthOfFrame), height(heightOfFrame),timer(0){
+}
 
 void Animation::play(const float &dt, sf::Sprite &sprite){
-    timer+=1000*dt;
+    timer += 1000 * dt;
     if(timer>=animationTimer)
     {
         timer-=animationTimer;
@@ -21,6 +22,7 @@ void Animation::play(const float &dt, sf::Sprite &sprite){
             currentRect.left += width;
         else
             currentRect.left = startRect.left;
+        sprite.setTexture(texture);
         sprite.setTextureRect(currentRect);
     }
 }
@@ -29,3 +31,5 @@ bool Animation::isPlaying() const {
         return false;
     return true;
 }
+
+

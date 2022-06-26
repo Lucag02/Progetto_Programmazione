@@ -3,7 +3,7 @@
 //
 
 #include "GameCharacter.h"
-GameCharacter::GameCharacter(ResourceManager &resources, int HP, int m, float x, float y, float movespeed,
+GameCharacter::GameCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                              float manaregen) :
         hp(HP),mana(m),moveSpeed(movespeed),manaRegen(manaregen),resources(resources),prevPos(sf::Vector2f(x,y)){}
 

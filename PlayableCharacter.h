@@ -8,7 +8,7 @@
 #include "Hitbox.h"
 class PlayableCharacter: public GameCharacter{
 public:
-    explicit PlayableCharacter(ResourceManager &resources, int HP = 10, int m = 0, float x = 0, float y = 0,
+    explicit PlayableCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 10, int m = 0,
                                float movespeed = 150, float manaregen = 2);
 
     bool isAnimationLocked() const;
