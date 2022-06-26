@@ -4,6 +4,7 @@
 
 #ifndef PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
 #define PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
+#define DEBUG 0
 #include <sstream>
 #include "States.h"
 #include "PlayableCharacter.h"
@@ -19,7 +20,9 @@ private:
     ResourceManager mapResources;
     ResourceManager enemyResources;
     void loadTextures();
+#if DEBUG
     float dT;
+#endif
 public:
     GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow* w);
     void update(const float& dt) override;

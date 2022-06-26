@@ -13,7 +13,9 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
 }
 
 void GameState::update(const float &dt) {
+#if DEBUG
     dT=dt;
+#endif
     player->update(dt);
     if(player->isAnimationLocked()&&!player->isAnimationPlaying())
         player->setAnimationLock(false);
@@ -31,6 +33,7 @@ void GameState::render(sf::RenderTarget &target) {
         enemy->render(target);
     player->render(target);
     updateMousePos();
+#if DEBUG
     sf::Text mousePosText;
     sf::Font font;
     font.loadFromFile("../Config/ComicSans.ttf");
@@ -47,6 +50,7 @@ void GameState::render(sf::RenderTarget &target) {
     mousePosText.setString(ss.str());
     window->draw(dt);
     window->draw(mousePosText);
+#endif
 }
 
 void GameState::loadTextures() {

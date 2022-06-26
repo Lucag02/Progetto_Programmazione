@@ -2,10 +2,13 @@
 // Created by luca on 21/06/22.
 //
 #include "PlayableCharacter.h"
+#define DEBUG 1
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false){
-    //moveSpeed=1000;
+#if DEBUG
+    moveSpeed=1000;
+#endif
     sprite=sf::Sprite(resources.getTexture("IDLE_ANIMATION"));
     sprite.setTextureRect(sf::IntRect(0,0,120,80));
     sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
@@ -67,7 +70,9 @@ void PlayableCharacter::update(const float &dt) {
 
 void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
-    //target.draw(*hitbox);
+#if DEBUG
+    target.draw(*hitbox);
+#endif
 }
 
 PlayableCharacter::~PlayableCharacter() {

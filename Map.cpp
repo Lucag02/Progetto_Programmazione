@@ -17,6 +17,7 @@ Map::Map(const sf::Texture &texture, ResourceManager &enemyResources, PlayableCh
 }
 
 void Map::update() {
+    sf::IntRect wall=tiles.at("WALL");
     sf::Vector2f pos,size;
     Hitbox hitbox=player.getHitbox();
     pos=hitbox.getPosition();
@@ -25,9 +26,28 @@ void Map::update() {
     size=hitbox.getSize();
     size.x/=tileWidth;
     size.y/=tileHeight;
-     if(map[pos.x][pos.y].getTextureRect()==tiles.at("WALL")||map[pos.x+size.x][pos.y].getTextureRect()==tiles.at("WALL")||
-             map[pos.x][pos.y+size.y].getTextureRect()==tiles.at("WALL")||map[pos.x+size.x][pos.y+size.y].getTextureRect()==tiles.at("WALL"))
+     if(map[pos.x][pos.y].getTextureRect()==wall||map[pos.x+size.x][pos.y].getTextureRect()==wall||
+             map[pos.x][pos.y+size.y].getTextureRect()==wall||map[pos.x+size.x][pos.y+size.y].getTextureRect()==wall)
          player.undoMove();
+     for(int i=0;i<size.x;i++)
+         for(int j=0;j<size.y;j++)
+             if(map[pos.x+i][pos.y+j].getTextureRect()==tiles.at("WALL"))
+                 player.undoMove();
+     for(auto & enemy : enemies)
+     {
+         hitbox=enemy->getHitbox();
+         pos=hitbox.getPosition();
+         pos.x/=tileWidth;
+         pos.y/=tileHeight;
+         size=hitbox.getSize();
+         size.x/=tileWidth;
+         size.y/=tileHeight;
+         if(map[pos.x][pos.y].getTextureRect()==wall||map[pos.x+size.x][pos.y].getTextureRect()==wall||
+            map[pos.x][pos.y+size.y].getTextureRect()==wall||map[pos.x+size.x][pos.y+size.y].getTextureRect()==wall) {
+             enemy->undoMove();
+             enemy->hasHitWall();
+         }
+     }
 }
 
 void Map::render(sf::RenderTarget &target) {
@@ -140,6 +160,9 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
         if(map[i][startY - 2].getTextureRect() != tiles.at("TERRAIN"))
             map[i][startY - 2].setTextureRect(tiles.at("WALL"));
         map[i][startY - 1].setTextureRect(tiles.at("TERRAIN"));
+        if(rand()%20==1)
+            enemies.emplace_back(std::make_unique<Enemy>(
+                    enemyResources, i * tileWidth, startY * tileHeight, rand() % 2));
         map[i][startY].setTextureRect(tiles.at("TERRAIN"));
         map[i][startY + 1].setTextureRect(tiles.at("TERRAIN"));
         if(map[i][startY + 2].getTextureRect() != tiles.at("TERRAIN"))
@@ -154,6 +177,9 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
         if(map[endX - 2][i].getTextureRect() != tiles.at("TERRAIN"))
             map[endX - 2][i].setTextureRect(tiles.at("WALL"));
         map[endX - 1][i].setTextureRect(tiles.at("TERRAIN"));
+        if(rand()%20==1)
+            enemies.emplace_back(std::make_unique<Enemy>(
+                    enemyResources, endX * tileWidth, i * tileHeight, rand() % 2));
         map[endX][i].setTextureRect(tiles.at("TERRAIN"));
         map[endX + 1][i].setTextureRect(tiles.at("TERRAIN"));
         if(map[endX + 2][i].getTextureRect() != tiles.at("TERRAIN"))
