@@ -10,7 +10,7 @@ Animation::Animation(int startX, int startY, int endX, int endY, int widthOfFram
         endRect(sf::IntRect(endX*widthOfFrame, endY*heightOfFrame,
                             widthOfFrame, heightOfFrame)),
         currentRect(startRect), animationTimer(animationTimer),
-        width(widthOfFrame), height(heightOfFrame),timer(0){
+        width(widthOfFrame), height(heightOfFrame),timer(0),playing(true){
 }
 
 void Animation::play(const float &dt, sf::Sprite &sprite){
@@ -18,22 +18,32 @@ void Animation::play(const float &dt, sf::Sprite &sprite){
     if(timer>=animationTimer)
     {
         timer-=animationTimer;
-        if(currentRect!=endRect)
-            if(currentRect.left==endRect.left) {
+        if(currentRect!=endRect) {
+            playing=true;
+            if (currentRect.left == endRect.left) {
                 currentRect.top += height;
                 currentRect.left = 0;
-            }
-            else
+            } else
                 currentRect.left += width;
-        else
+        }
+        else {
+            playing=false;
             currentRect = startRect;
-        sprite.setTextureRect(currentRect);
+        }
+        if(playing)
+            sprite.setTextureRect(currentRect);
     }
 }
+
 bool Animation::isPlaying() const {
-    if (currentRect.left == startRect.left)
-        return false;
-    return true;
+    return playing;
+}
+
+int Animation::getAnimationFrame() const {
+    if(currentRect.top==startRect.top)
+        return (currentRect.left-startRect.left)/width;
+    else
+        return (endRect.left*(currentRect.top-startRect.top-height)+endRect.left-startRect.left+currentRect.left)/width;
 }
 
 

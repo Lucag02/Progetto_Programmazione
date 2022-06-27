@@ -19,9 +19,13 @@ public:
     void setPosition(float x, float y);
     const sf::Vector2f& getPrevPos();
     void move(float x,float y);
+    bool isAttacking() const;
+    Hitbox& getDamageHitbox();
     ~PlayableCharacter() override;
     sf::Vector2f getPosition();
 private:
+    std::unique_ptr<Hitbox> damageHitbox;
+    bool damageActive;
     bool animationLock;
     bool hardLock;
     std::string animation;

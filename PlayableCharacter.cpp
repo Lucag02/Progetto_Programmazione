@@ -2,18 +2,19 @@
 // Created by luca on 21/06/22.
 //
 #include "PlayableCharacter.h"
-#define DEBUG 0
+#define DEBUG 1
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
-                                                        animationLock(false), hardLock(false){
+                                                        animationLock(false), hardLock(false),damageActive(false){
 #if DEBUG
-    moveSpeed=1000;
+    //moveSpeed=1000;
 #endif
     sprite=sf::Sprite(resources.getTexture("PLAYER"));
     sprite.setTextureRect(sf::IntRect(0,0,120,80));
     sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
     sprite.setPosition(sf::Vector2f(x,y));
     hitbox= std::make_unique<Hitbox>(sprite,20.f,37.f,false,10,-3);
+    damageHitbox=std::make_unique<Hitbox>(sprite,33.f,37.f,true);
 }
 
 void PlayableCharacter::update(const float &dt) {
@@ -64,6 +65,15 @@ void PlayableCharacter::update(const float &dt) {
     if(animationLock)
         animation=lockAnimation;
     hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(), sprite.getPosition().y - hitbox->getOffsetY());
+    if(animation=="ATTACK_ANIMATION"&&resources.getAnimation(animation).getAnimationFrame()>0) {
+        damageActive = true;
+        if(sprite.getScale().x>0)
+            damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);
+        else
+            damageHitbox->setPosition(hitbox->getPosition().x - damageHitbox->getSize().x, hitbox->getPosition().y);
+    }
+    else
+        damageActive=false;
     resources.playAnimation(animation,dt,sprite);
 }
 
@@ -71,6 +81,8 @@ void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
 #if DEBUG
     target.draw(*hitbox);
+    if(damageActive)
+        target.draw(*damageHitbox);
 #endif
 }
 
@@ -107,5 +119,13 @@ const sf::Vector2f &PlayableCharacter::getPrevPos() {
 void PlayableCharacter::move(float x, float y) {
     sprite.move(x,y);
     hitbox->move(x,y);
+}
+
+bool PlayableCharacter::isAttacking() const {
+    return damageActive;
+}
+
+Hitbox &PlayableCharacter::getDamageHitbox() {
+    return *damageHitbox;
 }
 
