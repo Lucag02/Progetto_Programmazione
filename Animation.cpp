@@ -19,10 +19,14 @@ void Animation::play(const float &dt, sf::Sprite &sprite){
     {
         timer-=animationTimer;
         if(currentRect!=endRect)
-            currentRect.left += width;
+            if(currentRect.left==endRect.left) {
+                currentRect.top += height;
+                currentRect.left = 0;
+            }
+            else
+                currentRect.left += width;
         else
-            currentRect.left = startRect.left;
-        sprite.setTexture(texture);
+            currentRect = startRect;
         sprite.setTextureRect(currentRect);
     }
 }

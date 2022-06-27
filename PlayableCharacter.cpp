@@ -9,7 +9,7 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float 
 #if DEBUG
     moveSpeed=1000;
 #endif
-    sprite=sf::Sprite(resources.getTexture("IDLE_ANIMATION"));
+    sprite=sf::Sprite(resources.getTexture("PLAYER"));
     sprite.setTextureRect(sf::IntRect(0,0,120,80));
     sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
     sprite.setPosition(sf::Vector2f(x,y));
@@ -53,7 +53,6 @@ void PlayableCharacter::update(const float &dt) {
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
                 sprite.move(0, -1 * dt * moveSpeed);
-
                 animation = "RUN_ANIMATION";
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
                     lockAnimation = "ROLL_ANIMATION";

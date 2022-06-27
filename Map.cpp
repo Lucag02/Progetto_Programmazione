@@ -127,7 +127,7 @@ void Map::placeRooms() {
                     else {
                         map[j][k].setTextureRect(tiles.at("TERRAIN"));
                         //FIXME enemies spawn inside walls
-                        if(rand()%30==1)
+                        if(rand()%200==1)
                             enemies.emplace_back(std::make_unique<Enemy>(
                                     enemyResources, j * tileWidth, k * tileHeight, rand() % 2));
                     }

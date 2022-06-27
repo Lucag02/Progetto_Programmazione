@@ -14,6 +14,7 @@ private:
     bool active;
     enemyType type;
     sf::Vector2i direction;
+    sf::Vector2f scaleFactor;
 public:
     Enemy(ResourceManager &resources, float x, float y, int type);
     void update(const float &dt, PlayableCharacter &player);

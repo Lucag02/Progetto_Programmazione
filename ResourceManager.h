@@ -16,8 +16,8 @@ public:
     ResourceManager();
     void addTexture(const std::string& name,const std::string& filepath);
     const sf::Texture& getTexture(const std::string& name) const;
-    void addAnimation(const std::string &AnimationName, int width, int height, int startX,
-                      int startY, int endX, int endY,float animationTimer);
+    void addAnimation(const std::string &AnimationName, const std::string &textureSheet, int width, int height,
+                      int startX, int startY, int endX, int endY, float animationTimer);
     void playAnimation(const std::string& name, const float& dt,sf::Sprite& sprite);
     const Animation & getAnimation(const std::string& animationName);
 };

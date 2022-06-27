@@ -55,20 +55,16 @@ void GameState::render(sf::RenderTarget &target) {
 
 void GameState::loadTextures() {
     mapResources.addTexture("TILES","../Resources/DungeonCrawl_ProjectUtumnoTileset.png");
-    playerResources.addTexture("IDLE_ANIMATION", "../Resources/_Idle.png");
-    playerResources.addAnimation("IDLE_ANIMATION", 120, 80, 0, 0, 9, 0, 100);
-    playerResources.addTexture("ATTACK_ANIMATION", "../Resources/_Attack.png");
-    playerResources.addAnimation("ATTACK_ANIMATION", 120, 80, 0, 0, 3, 0, 100);
-    playerResources.addTexture("RUN_ANIMATION", "../Resources/_Run.png");
-    playerResources.addAnimation("RUN_ANIMATION", 120, 80, 0, 0, 9, 0, 100);
-    playerResources.addTexture("DEATH_ANIMATION", "../Resources/_Death.png");
-    playerResources.addAnimation("DEATH_ANIMATION", 120, 80, 0, 0, 9, 0, 100);
-    playerResources.addTexture("ROLL_ANIMATION", "../Resources/_Roll.png");
-    playerResources.addAnimation("ROLL_ANIMATION", 120, 80, 0, 0, 11, 0, 50);
-    enemyResources.addTexture("SKELETON_MOVE","../Resources/Skeleton_Walk.png");
-    enemyResources.addAnimation("SKELETON_MOVE",50, 48, 0, 0, 5, 0, 150);
-    enemyResources.addTexture("SLIME_MOVE","../Resources/Slime_Walk.png");
-    enemyResources.addAnimation("SLIME_MOVE",32, 25, 0, 0, 3, 0, 150);
+    playerResources.addTexture("PLAYER","../Resources/Player.png");
+    enemyResources.addTexture("SKELETON","../Resources/Skeleton_Walk.png");
+    enemyResources.addTexture("SLIME","../Resources/Slime.png");
+    playerResources.addAnimation("ATTACK_ANIMATION", "PLAYER", 120, 80, 0, 0, 3, 0, 100);
+    playerResources.addAnimation("IDLE_ANIMATION", "PLAYER", 120, 80, 0, 1, 9, 1, 100);
+    playerResources.addAnimation("RUN_ANIMATION", "PLAYER", 120, 80, 0, 3, 9, 3, 100);
+    playerResources.addAnimation("DEATH_ANIMATION", "PLAYER", 120, 80, 4, 0, 13, 0, 100);
+    playerResources.addAnimation("ROLL_ANIMATION", "PLAYER", 120, 80, 0, 2, 11, 2, 50);
+    enemyResources.addAnimation("SKELETON_MOVE", "SKELETON", 50, 48, 0, 0, 5, 0, 150);
+    enemyResources.addAnimation("SLIME_MOVE", "SLIME", 32, 25, 4, 0, 7, 0, 150);
 }
 GameState::~GameState() {
 
