@@ -29,6 +29,7 @@ void Map::update() {
      if(map[pos.x][pos.y].getTextureRect()==wall||map[pos.x+size.x][pos.y].getTextureRect()==wall||
              map[pos.x][pos.y+size.y].getTextureRect()==wall||map[pos.x+size.x][pos.y+size.y].getTextureRect()==wall)
          player.undoMove();
+     //FIXME doesn't work
      for(int i=0;i<size.x;i++)
          for(int j=0;j<size.y;j++)
              if(map[pos.x+i][pos.y+j].getTextureRect()==tiles.at("WALL"))
@@ -45,7 +46,6 @@ void Map::update() {
          if(map[pos.x][pos.y].getTextureRect()==wall||map[pos.x+size.x][pos.y].getTextureRect()==wall||
             map[pos.x][pos.y+size.y].getTextureRect()==wall||map[pos.x+size.x][pos.y+size.y].getTextureRect()==wall) {
              enemy->undoMove();
-             enemy->hasHitWall();
          }
      }
 }
@@ -126,6 +126,7 @@ void Map::placeRooms() {
                     }
                     else {
                         map[j][k].setTextureRect(tiles.at("TERRAIN"));
+                        //FIXME enemies spawn inside walls
                         if(rand()%30==1)
                             enemies.emplace_back(std::make_unique<Enemy>(
                                     enemyResources, j * tileWidth, k * tileHeight, rand() % 2));

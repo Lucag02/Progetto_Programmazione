@@ -2,7 +2,7 @@
 // Created by luca on 21/06/22.
 //
 #include "PlayableCharacter.h"
-#define DEBUG 1
+#define DEBUG 0
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false){
@@ -99,5 +99,14 @@ void PlayableCharacter::setPosition(float x, float y) {
 
 sf::Vector2f PlayableCharacter::getPosition() {
     return sprite.getPosition();
+}
+
+const sf::Vector2f &PlayableCharacter::getPrevPos() {
+    return prevPos;
+}
+
+void PlayableCharacter::move(float x, float y) {
+    sprite.move(x,y);
+    hitbox->move(x,y);
 }
 

@@ -14,9 +14,11 @@ public:
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
     bool isAnimationPlaying();
-    void update(const float &dt) override;
+    void update(const float &dt);
     void render(sf::RenderTarget& target) override;
     void setPosition(float x, float y);
+    const sf::Vector2f& getPrevPos();
+    void move(float x,float y);
     ~PlayableCharacter() override;
     sf::Vector2f getPosition();
 private:

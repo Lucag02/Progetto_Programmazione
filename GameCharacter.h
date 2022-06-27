@@ -26,7 +26,6 @@ public:
                            float manaregen = 2);
     Hitbox & getHitbox();
     void undoMove();
-    virtual void update(const float& dt)=0;
     virtual void render(sf::RenderTarget &target)=0;
     virtual ~GameCharacter()=default;
 };

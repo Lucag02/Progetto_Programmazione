@@ -20,7 +20,7 @@ void GameState::update(const float &dt) {
     if(player->isAnimationLocked()&&!player->isAnimationPlaying())
         player->setAnimationLock(false);
     for(auto& enemy:enemies)
-        enemy->update(dt);
+        enemy->update(dt, *player);
     map->update();
 }
 
