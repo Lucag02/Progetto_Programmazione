@@ -63,7 +63,7 @@ void PlayableCharacter::update(const float &dt) {
     if(animationLock)
         animation=lockAnimation;
     hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(), sprite.getPosition().y - hitbox->getOffsetY());
-    if(animation=="ATTACK_ANIMATION"&&resources.getAnimation(animation).getAnimationFrame()>0) {
+    if(animation=="ATTACK_ANIMATION"&&resources.getAnimation(animation).getAnimationFrame()>0&&resources.getAnimation(animation).getAnimationFrame()<3) {
         damageActive = true;
         if(sprite.getScale().x>0)
             damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);

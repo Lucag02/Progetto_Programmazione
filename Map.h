@@ -13,10 +13,16 @@
 #include "Enemy.h"
 class Map {
 private:
+    enum class TileType{VOID=0,WALL=1,TERRAIN=2,GRASS=3};
     struct Tile{
+        TileType type=TileType::GRASS;
         sf::RectangleShape tile;
         float distance=900;
         explicit Tile(sf::RectangleShape  rectangle):tile(std::move(rectangle)){};
+        void setTile(TileType tileType,const std::map<TileType, sf::IntRect>& t){
+            tile.setTextureRect(t.at(tileType));
+            type=tileType;
+        }
     };
     class Room {
     public:
@@ -33,7 +39,7 @@ private:
     int tileHeight;
     const sf::Texture& texture;
     std::vector<Room> rooms;
-    std::map<std::string, sf::IntRect> tiles;
+    std::map<TileType, sf::IntRect> tiles;
     std::vector<std::vector<Tile>> map;
     int sizeX;
     int sizeY;

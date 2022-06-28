@@ -94,7 +94,7 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
 void Enemy::render(sf::RenderTarget &target) {
     if(active) {
         target.draw(sprite);
-        //target.draw(*hitbox);
+        target.draw(*hitbox);
     }
 }
 

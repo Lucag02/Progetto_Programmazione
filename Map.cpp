@@ -9,15 +9,14 @@ Map::Map(const sf::Texture &texture, ResourceManager &enemyResources, PlayableCh
          std::vector<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
                                                          tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(20), enemyResources(enemyResources){
     //TODO maybe use enum for tiles
-    tiles["VOID"]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
-    tiles["GRASS"]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
-    tiles["TERRAIN"]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
-    tiles["WALL"]=sf::IntRect (4*tileWidth,16*tileHeight,tileWidth,tileHeight);
+    tiles[TileType::VOID]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
+    tiles[TileType::GRASS]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
+    tiles[TileType::TERRAIN]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
+    tiles[TileType::WALL]=sf::IntRect (4*tileWidth,16*tileHeight,tileWidth,tileHeight);
     createMap();
 }
 
 void Map::update(const float &dt) {
-    sf::IntRect wall=tiles.at("WALL");
     sf::Vector2f pos,size;
     Hitbox hitbox=player.getHitbox();
     pos=hitbox.getPosition();
@@ -33,11 +32,11 @@ void Map::update(const float &dt) {
                  i = size.x;
              if(j>size.y)
                  j=size.y;
-             if (map[pos.x + i][pos.y + j].tile.getTextureRect() == wall)
+             if (map[pos.x + i][pos.y + j].type == TileType::WALL)
                  player.undoMove();
          }
     Enemy::updateTimer(dt);
-    //FIXME fix enemies stuck on corners
+    //FIXME fix enemies sometimes stuck on corners
     if(Enemy::canChangeDirection()){
         pos.y+=0.5;
         map[pos.x][pos.y].distance=0;
@@ -53,7 +52,7 @@ void Map::update(const float &dt) {
             searchY=sizeY-pos.y;
         for(int i=0;i<searchX;i++)
             for(int j=0;j<searchY;j++) {
-                if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
+                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
                     if(i!=0||j!=0)
@@ -64,7 +63,7 @@ void Map::update(const float &dt) {
             searchX=pos.x;
         for(int i=0;i>-searchX;i--)
             for(int j=0;j<searchY;j++) {
-                if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
+                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
                 if(i!=0||j!=0)
@@ -75,7 +74,7 @@ void Map::update(const float &dt) {
             searchY=pos.y;
         for(int i=0;i<searchX;i++)
             for(int j=0;j>-searchY;j--) {
-                if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
+                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
                 if(i!=0||j!=0)
@@ -84,7 +83,7 @@ void Map::update(const float &dt) {
             }
         for(int i=0;i>-searchX;i--)
             for(int j=0;j>-searchY;j--) {
-                if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
+                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
                 if(i!=0||j!=0)
@@ -95,18 +94,20 @@ void Map::update(const float &dt) {
     for(auto & enemy : enemies){
          hitbox=enemy->getHitbox();
          pos=hitbox.getPosition();
+         pos.x+=hitbox.getSize().x/2;
+         pos.y+=hitbox.getSize().y/2;
          pos.x/=tileWidth;
          pos.y/=tileHeight;
          size=hitbox.getSize();
          size.x/=tileWidth;
          size.y/=tileHeight;
-         for(float i=0,c=0;i<size.x+1;i++)
+         for(float i=0;i<size.x+1;i++)
              for(float j=0;j<size.y+1;j++) {
                  if (i > size.x)
                      i = size.x;
                  if(j>size.y)
                      j=size.y;
-                 if (map[pos.x + i][pos.y + j].tile.getTextureRect() == wall) {
+                 if (map[pos.x + i][pos.y + j].type==TileType::WALL) {
                      enemy->undoMove();
                  }
          }
@@ -170,7 +171,7 @@ void Map::createMap() {
         for (int j = 0; j < sizeY; ++j) {
             map[i].push_back(Tile(sf::RectangleShape(sf::Vector2f(tileWidth, tileHeight))));
             map[i][j].tile.setTexture(&texture);
-            map[i][j].tile.setTextureRect(tiles.at("GRASS"));
+            map[i][j].setTile(TileType::GRASS,tiles);
             map[i][j].tile.setPosition(i * tileWidth, j * tileHeight);
         }
     }
@@ -199,12 +200,13 @@ void Map::placeRooms() {
             for (int j = x; j < x + w; j++)
                 for (int k = y; k < y + h; k++)
                     if(j==x||k==y||j==x+w-1||k==y+h-1) {
-                        if (map[j][k].tile.getTextureRect() != tiles.at("TERRAIN"))
-                            map[j][k].tile.setTextureRect(tiles.at("WALL"));
+                        if (map[j][k].type!=TileType::TERRAIN) {
+                            map[j][k].setTile(TileType::WALL,tiles);
+                        }
                     }
                     else {
-                        map[j][k].tile.setTextureRect(tiles.at("TERRAIN"));
-                        if(rand()%200==1) {
+                        map[j][k].setTile(TileType::TERRAIN,tiles);
+                        if(rand()%100==1) {
                             std::unique_ptr<Enemy> enemy=std::make_unique<Enemy>(
                                     enemyResources, j * tileWidth, k * tileHeight, rand() % 2);
                             Hitbox hitbox=enemy->getHitbox();
@@ -221,7 +223,7 @@ void Map::placeRooms() {
                                         l = size.x;
                                     if(t>size.y)
                                         t=size.y;
-                                    if (map[pos.x + l][pos.y + t].tile.getTextureRect() == tiles["WALL"]) {
+                                    if (map[pos.x + l][pos.y + t].type == TileType::WALL) {
                                         stuck=true;
                                     }
                                 }
@@ -258,33 +260,33 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
         endY=room2.getCenter().y;
     }
     for(int i=startX; i < endX; i++){
-        if(map[i][startY - 2].tile.getTextureRect() != tiles.at("TERRAIN"))
-            map[i][startY - 2].tile.setTextureRect(tiles.at("WALL"));
-        map[i][startY - 1].tile.setTextureRect(tiles.at("TERRAIN"));
-        if(rand()%20==1)
+        if(map[i][startY - 2].type != TileType::TERRAIN)
+            map[i][startY - 2].setTile(TileType::WALL,tiles);
+        map[i][startY - 1].setTile(TileType::TERRAIN,tiles);
+        if(rand()%10==1)
             enemies.emplace_back(std::make_unique<Enemy>(
                     enemyResources, i * tileWidth, startY * tileHeight, rand() % 2));
-        map[i][startY].tile.setTextureRect(tiles.at("TERRAIN"));
-        map[i][startY + 1].tile.setTextureRect(tiles.at("TERRAIN"));
-        if(map[i][startY + 2].tile.getTextureRect() != tiles.at("TERRAIN"))
-            map[i][startY + 2].tile.setTextureRect(tiles.at("WALL"));
+        map[i][startY].setTile(TileType::TERRAIN,tiles);
+        map[i][startY + 1].setTile(TileType::TERRAIN,tiles);
+        if(map[i][startY + 2].type!=TileType::TERRAIN)
+            map[i][startY + 2].setTile(TileType::WALL,tiles);
     }
     bool isStartYBigger= startY>endY;
-    if(map[endX+1][startY+1-2*!isStartYBigger].tile.getTextureRect()!=tiles.at("TERRAIN"))
-        map[endX+1][startY+1-2*!isStartYBigger].tile.setTextureRect(tiles.at("WALL"));
-    if(map[endX][startY+1-2*!isStartYBigger].tile.getTextureRect()!=tiles.at("TERRAIN"))
-        map[endX][startY+1-2*!isStartYBigger].tile.setTextureRect(tiles.at("WALL"));
+    if(map[endX+1][startY+1-2*!isStartYBigger].type!=TileType::TERRAIN)
+        map[endX + 1][startY + 1 - 2 * !isStartYBigger].setTile(TileType::WALL,tiles);
+    if(map[endX][startY+1-2*!isStartYBigger].type!=TileType::TERRAIN)
+        map[endX][startY+1-2*!isStartYBigger].setTile(TileType::WALL,tiles);
     for(int i=startY; i != endY; i+=(1-2*isStartYBigger)){
-        if(map[endX - 2][i].tile.getTextureRect() != tiles.at("TERRAIN"))
-            map[endX - 2][i].tile.setTextureRect(tiles.at("WALL"));
-        map[endX - 1][i].tile.setTextureRect(tiles.at("TERRAIN"));
-        if(rand()%20==1)
+        if(map[endX - 2][i].type != TileType::TERRAIN)
+            map[endX - 2][i].setTile(TileType::WALL,tiles);
+        map[endX - 1][i].setTile(TileType::TERRAIN,tiles);
+        if(rand()%10==1)
             enemies.emplace_back(std::make_unique<Enemy>(
                     enemyResources, endX * tileWidth, i * tileHeight, rand() % 2));
-        map[endX][i].tile.setTextureRect(tiles.at("TERRAIN"));
-        map[endX + 1][i].tile.setTextureRect(tiles.at("TERRAIN"));
-        if(map[endX + 2][i].tile.getTextureRect() != tiles.at("TERRAIN"))
-            map[endX + 2][i].tile.setTextureRect(tiles.at("WALL"));
+        map[endX][i].setTile(TileType::TERRAIN,tiles);
+        map[endX + 1][i].setTile(TileType::TERRAIN,tiles);
+        if(map[endX + 2][i].type != TileType::TERRAIN)
+            map[endX + 2][i].setTile(TileType::WALL,tiles);
     }
 }
 
@@ -301,7 +303,7 @@ float Map::distanceFromPlayer(float x, float y) {
                 else
                     sum = 1.44;
             }
-            if (!nearWall&&map[x + i][y + j].tile.getTextureRect()==tiles["WALL"])
+            if (!nearWall&&map[x + i][y + j].type==TileType::WALL)
                 nearWall=true;
         }
     return min+sum+nearWall*100;

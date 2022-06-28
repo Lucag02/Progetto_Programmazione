@@ -6,7 +6,7 @@
 #define PROGETTO_PROGRAMMAZIONE_PLAYABLECHARACTER_H
 #include "GameCharacter.h"
 #include "Hitbox.h"
-#define DEBUG 0
+#define DEBUG 1
 class PlayableCharacter: public GameCharacter{
 public:
     explicit PlayableCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 10, int m = 0,
