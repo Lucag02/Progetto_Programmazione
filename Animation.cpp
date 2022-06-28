@@ -4,7 +4,7 @@
 
 #include "Animation.h"
 Animation::Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame,
-                     const sf::Texture &texture, float animationTimer) :texture(texture),
+                     float animationTimer) :
         startRect(sf::IntRect(startX*widthOfFrame, startY*heightOfFrame,
                               widthOfFrame, heightOfFrame)),
         endRect(sf::IntRect(endX*widthOfFrame, endY*heightOfFrame,

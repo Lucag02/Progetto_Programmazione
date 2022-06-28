@@ -3,9 +3,10 @@
 //
 
 #include "Enemy.h"
-const float Enemy::moveTime=2000;
+const float Enemy::moveTime=500;
+float Enemy::timer=0;
 Enemy::Enemy(ResourceManager &resources, float x, float y, int type) : GameCharacter(resources, x, y), type(
-        static_cast<enemyType>(type)),active(false),direction(sf::Vector2i(0,0)),timer(0),dead(false),isdying(false){
+        static_cast<enemyType>(type)),active(false),direction(sf::Vector2i(0,0)),dead(false),isdying(false),aggro(false){
     if (this->type==enemyType::SKELETON) {
         scaleFactor=sf::Vector2f(1.3,1.3);
         sprite = sf::Sprite(resources.getTexture("SKELETON"));
@@ -26,15 +27,20 @@ Enemy::Enemy(ResourceManager &resources, float x, float y, int type) : GameChara
 }
 
 void Enemy::update(const float &dt, PlayableCharacter &player) {
-    if(distanceToPlayer(player.getPosition())<800)
-        active=true;
-    else
-        active=false;
+    if(distanceToPlayer(player.getPosition())<800) {
+        active = true;
+        if (distanceToPlayer(player.getPosition()) < 600)
+            aggro = true;
+        else
+            aggro=false;
+    }
+    else  {
+        active = false;
+        aggro=false;
+    }
     if(active&&!dead) {
-        timer += dt * 1000;
         prevPos = sprite.getPosition();
-        if (timer > moveTime || (direction.x == 0 && direction.y == 0)) {
-            timer -= moveTime;
+        if ((timer > moveTime || (direction.x == 0 && direction.y == 0))&&!aggro) {
             std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_int_distribution<> distr(-1, 1);
@@ -45,7 +51,7 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
             else if (direction.x < 0)
                 sprite.setScale(-1 * scaleFactor.x, 1 * scaleFactor.y);
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);
-        } else
+        }else
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);
         hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(),
                             sprite.getPosition().y - hitbox->getOffsetY());
@@ -93,6 +99,27 @@ void Enemy::render(sf::RenderTarget &target) {
 
 float Enemy::distanceToPlayer(sf::Vector2f playerPos) {
     return sqrt(pow(playerPos.x-sprite.getPosition().x,2)+pow(playerPos.y-sprite.getPosition().y,2));
+}
+
+void Enemy::updateTimer(const float &dt) {
+    timer+=dt*1000;
+}
+
+bool Enemy::isAggroed() const {
+    return aggro;
+}
+
+void Enemy::setDirection(const sf::Vector2i &dir) {
+    direction=dir;
+}
+
+bool Enemy::canChangeDirection() {
+    return timer>moveTime;
+}
+
+void Enemy::resetTimer() {
+    if(timer>moveTime)
+        timer-=moveTime;
 }
 
 

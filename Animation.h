@@ -8,7 +8,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-
+//TODO add enum class (instead of strings)
 class Animation {
 private:
     sf::IntRect startRect;
@@ -19,10 +19,8 @@ private:
     int width;
     int height;
     bool playing;
-    const sf::Texture& texture;
 public:
-    Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame, const sf::Texture &texture,
-              float animationTimer);
+    Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame, float animationTimer);
     void play(const float &dt, sf::Sprite &sprite);
     bool isPlaying() const;
     int getAnimationFrame() const;

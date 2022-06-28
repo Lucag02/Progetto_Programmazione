@@ -4,7 +4,7 @@
 
 #ifndef PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
 #define PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
-#define DEBUG 1
+
 #include <sstream>
 #include "States.h"
 #include "PlayableCharacter.h"

@@ -2,7 +2,7 @@
 // Created by luca on 21/06/22.
 //
 #include "PlayableCharacter.h"
-#define DEBUG 1
+
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false),damageActive(false){

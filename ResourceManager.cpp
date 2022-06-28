@@ -18,10 +18,9 @@ const sf::Texture& ResourceManager::getTexture(const std::string& name) const{
 }
 
 void
-ResourceManager::addAnimation(const std::string &AnimationName, const std::string &textureSheet, int width, int height,
-                              int startX, int startY, int endX, int endY, float animationTimer) {
-    animations.insert({AnimationName, Animation(startX, startY, endX, endY, width, height,
-                                                textures->at(textureSheet), animationTimer)});
+ResourceManager::addAnimation(const std::string &AnimationName, int width, int height, int startX, int startY, int endX,
+                              int endY, float animationTimer) {
+    animations.insert({AnimationName, Animation(startX, startY, endX, endY, width, height, animationTimer)});
 }
 
 const Animation & ResourceManager::getAnimation(const std::string &animationName) {
