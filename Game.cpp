@@ -3,7 +3,6 @@
 //
 
 #include "Game.h"
-//FIXME seemingly random crashes on map creation
 Game::Game() {
     initWindow();
     dt=0;

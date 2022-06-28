@@ -29,6 +29,7 @@ public:
     static void updateTimer(const float &dt);
     static bool canChangeDirection();
     static void resetTimer();
+
     void setDirection(const sf::Vector2i &dir);
 };
 

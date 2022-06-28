@@ -6,9 +6,7 @@
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false),damageActive(false){
-#if DEBUG
     //moveSpeed=1000;
-#endif
     sprite=sf::Sprite(resources.getTexture("PLAYER"));
     sprite.setTextureRect(sf::IntRect(0,0,120,80));
     sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);

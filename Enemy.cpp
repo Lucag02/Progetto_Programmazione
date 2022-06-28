@@ -3,7 +3,7 @@
 //
 
 #include "Enemy.h"
-const float Enemy::moveTime=500;
+const float Enemy::moveTime=100;
 float Enemy::timer=0;
 Enemy::Enemy(ResourceManager &resources, float x, float y, int type) : GameCharacter(resources, x, y), type(
         static_cast<enemyType>(type)),active(false),direction(sf::Vector2i(0,0)),dead(false),isdying(false),aggro(false){
@@ -40,16 +40,17 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
     }
     if(active&&!dead) {
         prevPos = sprite.getPosition();
+        if (direction.x > 0)
+            sprite.setScale(1 * scaleFactor.x, 1 * scaleFactor.y);
+        else if (direction.x < 0)
+            sprite.setScale(-1 * scaleFactor.x, 1 * scaleFactor.y);
         if ((timer > moveTime || (direction.x == 0 && direction.y == 0))&&!aggro) {
             std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_int_distribution<> distr(-1, 1);
             direction.x = distr(gen);
             direction.y = distr(gen);
-            if (direction.x > 0)
-                sprite.setScale(1 * scaleFactor.x, 1 * scaleFactor.y);
-            else if (direction.x < 0)
-                sprite.setScale(-1 * scaleFactor.x, 1 * scaleFactor.y);
+
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);
         }else
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);

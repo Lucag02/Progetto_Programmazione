@@ -36,9 +36,6 @@ void Map::update(const float &dt) {
              if (map[pos.x + i][pos.y + j].tile.getTextureRect() == wall)
                  player.undoMove();
          }
-    pos=player.getPosition();
-    pos.x/=tileWidth;
-    pos.y/=tileHeight;
     Enemy::updateTimer(dt);
     //FIXME fix enemies stuck on corners
     if(Enemy::canChangeDirection()){
@@ -48,8 +45,14 @@ void Map::update(const float &dt) {
         map[pos.x][pos.y+1].distance=1;
         map[pos.x-1][pos.y].distance=1;
         map[pos.x][pos.y-1].distance=1;
-        for(int i=0;i<25;i++)
-            for(int j=0;j<25;j++) {
+        int searchX=25;
+        if(pos.x+searchX>sizeX)
+            searchX=sizeX-pos.x;
+        int searchY=25;
+        if(pos.y+searchY>sizeY)
+            searchY=sizeY-pos.y;
+        for(int i=0;i<searchX;i++)
+            for(int j=0;j<searchY;j++) {
                 if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
@@ -57,8 +60,10 @@ void Map::update(const float &dt) {
                         map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
 
             }
-        for(int i=0;i>-25;i--)
-            for(int j=0;j<25;j++) {
+        if(pos.x-searchX<0)
+            searchX=pos.x;
+        for(int i=0;i>-searchX;i--)
+            for(int j=0;j<searchY;j++) {
                 if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
@@ -66,8 +71,10 @@ void Map::update(const float &dt) {
                     map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
 
             }
-        for(int i=0;i<25;i++)
-            for(int j=0;j>-25;j--) {
+        if(pos.y-searchY<0)
+            searchY=pos.y;
+        for(int i=0;i<searchX;i++)
+            for(int j=0;j>-searchY;j--) {
                 if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
@@ -75,8 +82,8 @@ void Map::update(const float &dt) {
                     map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
 
             }
-        for(int i=0;i>-25;i--)
-            for(int j=0;j>-25;j--) {
+        for(int i=0;i>-searchX;i--)
+            for(int j=0;j>-searchY;j--) {
                 if(map[pos.x+i][pos.y+j].tile.getTextureRect()==wall)
                     map[pos.x+i][pos.y+j].distance=-1;
                 else
@@ -93,14 +100,15 @@ void Map::update(const float &dt) {
          size=hitbox.getSize();
          size.x/=tileWidth;
          size.y/=tileHeight;
-         for(float i=0;i<size.x+1;i++)
+         for(float i=0,c=0;i<size.x+1;i++)
              for(float j=0;j<size.y+1;j++) {
                  if (i > size.x)
                      i = size.x;
                  if(j>size.y)
                      j=size.y;
-                 if (map[pos.x + i][pos.y + j].tile.getTextureRect() == wall)
+                 if (map[pos.x + i][pos.y + j].tile.getTextureRect() == wall) {
                      enemy->undoMove();
+                 }
          }
         if(enemy->isAggroed()&&Enemy::canChangeDirection())
             enemy->setDirection(getDiredctionToPlayer(pos.x,pos.y));
@@ -149,7 +157,7 @@ void Map::render(sf::RenderTarget &target) {
             if(i>=0&&i<sizeX&&j>=0&&j<sizeY) {
                 target.draw(map[i][j].tile);
 #if DEBUG
-                distance.setString(std::to_string(map[i][j].distance));
+                distance.setString(std::to_string(static_cast<int>(map[i][j].distance)));
                 distance.setPosition(i*tileWidth,j*tileHeight);
                 target.draw(distance);
 #endif
@@ -196,10 +204,32 @@ void Map::placeRooms() {
                     }
                     else {
                         map[j][k].tile.setTextureRect(tiles.at("TERRAIN"));
-                        //FIXME enemies spawn inside walls
-                        if(rand()%200==1)
-                            enemies.emplace_back(std::make_unique<Enemy>(
-                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2));
+                        if(rand()%200==1) {
+                            std::unique_ptr<Enemy> enemy=std::make_unique<Enemy>(
+                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2);
+                            Hitbox hitbox=enemy->getHitbox();
+                            sf::Vector2f pos=hitbox.getPosition();
+                            pos.x/=tileWidth;
+                            pos.y/=tileHeight;
+                            sf::Vector2f size=hitbox.getSize();
+                            size.x/=tileWidth;
+                            size.y/=tileHeight;
+                            bool stuck;
+                            for(float l=0;l<size.x+1;l++)
+                                for(float t=0;t<size.y+1;t++) {
+                                    if (l > size.x)
+                                        l = size.x;
+                                    if(t>size.y)
+                                        t=size.y;
+                                    if (map[pos.x + l][pos.y + t].tile.getTextureRect() == tiles["WALL"]) {
+                                        stuck=true;
+                                    }
+                                }
+                            if(!stuck)
+                                enemies.push_back(std::move(enemy));
+                            /*enemies.emplace_back(std::make_unique<Enemy>(
+                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2));*/
+                        }
                     }
             for(auto & j : rooms)
                 createCorridors(room,j);
@@ -261,16 +291,20 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
 float Map::distanceFromPlayer(float x, float y) {
     float sum=0;
     float min=800;
+    bool nearWall=false;
     for(int i=-1;i<2;i++)
-        for(int j=-1;j<2;j++)
-            if(map[x+i][y+j].distance>=0&&map[x+i][y+j].distance<min&&(i!=0||j!=0)) {
+        for(int j=-1;j<2;j++) {
+            if (map[x + i][y + j].distance >= 0 && map[x + i][y + j].distance < min && (i != 0 || j != 0)) {
                 min = map[x + i][y + j].distance;
-                if(abs(i)+abs(j)==1)
-                    sum=1;
+                if (abs(i) + abs(j) == 1)
+                    sum = 1;
                 else
-                    sum=1.44;
+                    sum = 1.44;
             }
-    return min+sum;
+            if (!nearWall&&map[x + i][y + j].tile.getTextureRect()==tiles["WALL"])
+                nearWall=true;
+        }
+    return min+sum+nearWall*100;
 }
 
 sf::Vector2i Map::getDiredctionToPlayer(float x, float y) {
