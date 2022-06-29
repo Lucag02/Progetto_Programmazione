@@ -21,6 +21,9 @@ protected:
     float manaRegen;
     ResourceManager resources;
     sf::Vector2f prevPos;
+    std::unique_ptr<Hitbox> damageHitbox;
+    bool damageActive;
+    sf::Vector2f scaleFactor;
 public:
     explicit GameCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 10, int m = 0,float movespeed = 100,
                            float manaregen = 2);

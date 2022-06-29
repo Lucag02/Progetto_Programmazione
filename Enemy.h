@@ -16,7 +16,6 @@ private:
     bool active;
     enemyType type;
     sf::Vector2i direction;
-    sf::Vector2f scaleFactor;
     bool dead;
     bool isdying;
     bool aggro;

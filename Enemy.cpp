@@ -56,13 +56,19 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);
         hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(),
                             sprite.getPosition().y - hitbox->getOffsetY());
-        //FIXME stutter when moving during collision and clip in wall if pushed
+        //FIXME collision don't work properly
         if (player.getHitbox().intersects(hitbox->getGlobalBounds())) {
             sprite.setPosition(prevPos);
             sf::Vector2f move = player.getPrevPos() - player.getPosition();
-            sprite.move(-move.x, -move.y);
-            hitbox->move(-move.x, -move.y);
-            player.move(move.x, move.y);
+            sprite.move(-move.x/2, -move.y/2);
+            hitbox->move(-move.x/2, -move.y/2);
+            player.move(move.x/2, move.y/2);
+            if (player.getHitbox().intersects(hitbox->getGlobalBounds())) {
+                sprite.move(move.x/2, move.y/2);
+                hitbox->move(move.x/2, move.y/2);
+            }
+            if (player.getHitbox().intersects(hitbox->getGlobalBounds()))
+                player.move(move.x/2, move.y/2);
         }
         if (player.isAttacking() && player.getDamageHitbox().intersects(hitbox->getGlobalBounds()))
             hp -= 10;
@@ -72,21 +78,21 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
         }
     }
     if (type == enemyType::SLIME) {
-        if(isdying&&resources.getAnimation("SLIME_DEATH").isPlaying()) {
-            resources.playAnimation("SLIME_DEATH", dt, sprite);
+        if(isdying&&resources.getAnimation(AnimationName::SLIME_DEATH).isPlaying()) {
+            resources.playAnimation(AnimationName::SLIME_DEATH, dt, sprite);
         }
         else
             if(active&&!dead)
-                resources.playAnimation("SLIME_MOVE", dt, sprite);
+                resources.playAnimation(AnimationName::SLIME_MOVE, dt, sprite);
     }
     else {
         if (isdying) {
-            resources.playAnimation("SKELETON_DEATH", dt, sprite);
-            if (!resources.getAnimation("SKELETON_DEATH").isPlaying())
+            resources.playAnimation(AnimationName::SKELETON_DEATH, dt, sprite);
+            if (!resources.getAnimation(AnimationName::SKELETON_DEATH).isPlaying())
                 isdying = false;
 
         } else if (active && !dead)
-            resources.playAnimation("SKELETON_MOVE", dt, sprite);
+            resources.playAnimation(AnimationName::SKELETON_MOVE, dt, sprite);
     }
 
 }
@@ -94,7 +100,7 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
 void Enemy::render(sf::RenderTarget &target) {
     if(active) {
         target.draw(sprite);
-        target.draw(*hitbox);
+        //target.draw(*hitbox);
     }
 }
 

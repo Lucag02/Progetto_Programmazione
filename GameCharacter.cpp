@@ -5,7 +5,8 @@
 #include "GameCharacter.h"
 GameCharacter::GameCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                              float manaregen) :
-        hp(HP),mana(m),moveSpeed(movespeed),manaRegen(manaregen),resources(resources),prevPos(sf::Vector2f(x,y)){}
+        hp(HP),mana(m),moveSpeed(movespeed),manaRegen(manaregen),resources(resources),
+        prevPos(sf::Vector2f(x,y)),damageActive(false),scaleFactor(sf::Vector2f(1,1)){}
 
 void GameCharacter::undoMove() {
     sprite.setPosition(prevPos);

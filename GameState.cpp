@@ -26,7 +26,6 @@ void GameState::update(const float &dt) {
 
 void GameState::render(sf::RenderTarget &target) {
     map->render(target);
-    //FIXME fix camera going out of bounds
     view.setCenter(player->getPosition());
     window->setView(view);
     for(auto& enemy: enemies)
@@ -55,18 +54,18 @@ void GameState::render(sf::RenderTarget &target) {
 
 void GameState::loadTextures() {
     mapResources.addTexture("TILES","../Resources/DungeonCrawl_ProjectUtumnoTileset.png");
-    playerResources.addTexture("PLAYER","../Resources/Player.png");
+    playerResources.addTexture("KNIGHT","../Resources/Knight.png");
     enemyResources.addTexture("SKELETON","../Resources/Skeleton.png");
     enemyResources.addTexture("SLIME","../Resources/Slime.png");
-    playerResources.addAnimation("ATTACK_ANIMATION", 120, 80, 0, 0, 3, 0, 100);
-    playerResources.addAnimation("IDLE_ANIMATION", 120, 80, 0, 1, 9, 1, 100);
-    playerResources.addAnimation("RUN_ANIMATION", 120, 80, 0, 3, 9, 3, 100);
-    playerResources.addAnimation("DEATH_ANIMATION", 120, 80, 4, 0, 13, 0, 100);
-    playerResources.addAnimation("ROLL_ANIMATION", 120, 80, 0, 2, 11, 2, 50);
-    enemyResources.addAnimation("SKELETON_MOVE", 50, 48, 0, 1, 5, 1, 150);
-    enemyResources.addAnimation("SKELETON_DEATH", 50, 48, 0, 2, 5, 2, 150);
-    enemyResources.addAnimation("SLIME_MOVE", 32, 25, 4, 0, 7, 0, 150);
-    enemyResources.addAnimation("SLIME_DEATH", 32, 25, 1, 2, 4, 2, 150);
+    playerResources.addAnimation(AnimationName::KNIGHT_ATTACK, 50, 37, 0, 4, 9, 4, 90);
+    playerResources.addAnimation(AnimationName::KNIGHT_IDLE, 50, 37, 0, 0, 3, 0, 100);
+    playerResources.addAnimation(AnimationName::KNIGHT_RUN, 50, 37, 0, 1, 5, 1, 100);
+    playerResources.addAnimation(AnimationName::KNIGHT_DEATH, 50, 37, 0, 9, 4, 9, 100, false);
+    playerResources.addAnimation(AnimationName::KNIGHT_ROLL, 50, 37, 0, 8, 4, 8, 100);
+    enemyResources.addAnimation(AnimationName::SKELETON_MOVE, 50, 48, 0, 1, 5, 1, 150);
+    enemyResources.addAnimation(AnimationName::SKELETON_DEATH, 50, 48, 0, 2, 5, 2, 150, false);
+    enemyResources.addAnimation(AnimationName::SLIME_MOVE, 32, 25, 4, 0, 7, 0, 150);
+    enemyResources.addAnimation(AnimationName::SLIME_DEATH, 32, 25, 1, 2, 4, 2, 150, false);
 }
 GameState::~GameState() {
 

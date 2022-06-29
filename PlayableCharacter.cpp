@@ -5,56 +5,61 @@
 
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
-                                                        animationLock(false), hardLock(false),damageActive(false){
+                                                        animationLock(false), hardLock(false){
+    animation=AnimationName::KNIGHT_IDLE;
+    lockAnimation=AnimationName::KNIGHT_IDLE;
     //moveSpeed=1000;
-    sprite=sf::Sprite(resources.getTexture("PLAYER"));
-    sprite.setTextureRect(sf::IntRect(0,0,120,80));
+    scaleFactor=sf::Vector2f (1.4,1.4);
+    sprite=sf::Sprite(resources.getTexture("KNIGHT"));
+    sprite.setTextureRect(sf::IntRect(0,0,50,37));
+    sprite.setScale(scaleFactor);
     sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
     sprite.setPosition(sf::Vector2f(x,y));
-    hitbox= std::make_unique<Hitbox>(sprite,20.f,37.f,false,10,-3);
-    damageHitbox=std::make_unique<Hitbox>(sprite,33.f,37.f,true);
+    hitbox= std::make_unique<Hitbox>(sprite,20.f,37.f,false,10,15);
+    damageHitbox=std::make_unique<Hitbox>(sprite,20.f,40.f,true);
 }
 
 void PlayableCharacter::update(const float &dt) {
-    animation="IDLE_ANIMATION";
+    sf::Vector2f move=sf::Vector2f(0,0);
+    animation=AnimationName::KNIGHT_IDLE;
     if(!hardLock) {
         if (!animationLock&&sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            lockAnimation = "ATTACK_ANIMATION";
+            lockAnimation = AnimationName::KNIGHT_ATTACK;
             animationLock = true;
             hardLock=true;
         } else{
             prevPos=sprite.getPosition();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-                sprite.move(-1 * dt * moveSpeed, 0);
-                animation = "RUN_ANIMATION";
-                sprite.setScale(-1, 1);
+                move.x-=1;
+                animation = AnimationName::KNIGHT_RUN;
+                sprite.setScale(-scaleFactor.x, scaleFactor.y);
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = "ROLL_ANIMATION";
+                    lockAnimation = AnimationName::KNIGHT_ROLL;
                     animationLock = true;
                 }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-                sprite.move(0, 1 * dt * moveSpeed);
-                animation = "RUN_ANIMATION";
+                move.y+=1;
+                animation = AnimationName::KNIGHT_RUN;
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = "ROLL_ANIMATION";
+                    lockAnimation = AnimationName::KNIGHT_ROLL;
                     animationLock = true;
                 }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-                sprite.move(1 * dt * moveSpeed, 0);
-                animation = "RUN_ANIMATION";
-                sprite.setScale(1, 1);
+                move.x+=1;
+                animation = AnimationName::KNIGHT_RUN;
+                sprite.setScale(scaleFactor);
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = "ROLL_ANIMATION";
+                    lockAnimation = AnimationName::KNIGHT_ROLL;
                     animationLock = true;
                 }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-                sprite.move(0, -1 * dt * moveSpeed);
-                animation = "RUN_ANIMATION";
+                move.y-=1;
+                animation = AnimationName::KNIGHT_RUN;
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = "ROLL_ANIMATION";
+                    lockAnimation = AnimationName::KNIGHT_ROLL;
                     animationLock = true;
                 }
             }
@@ -62,8 +67,13 @@ void PlayableCharacter::update(const float &dt) {
     }
     if(animationLock)
         animation=lockAnimation;
+    if(animation==AnimationName::KNIGHT_ROLL) {
+        move.x *= 1.6;
+        move.y *= 1.6;
+    }
+    sprite.move(move*dt*moveSpeed);
     hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(), sprite.getPosition().y - hitbox->getOffsetY());
-    if(animation=="ATTACK_ANIMATION"&&resources.getAnimation(animation).getAnimationFrame()>0&&resources.getAnimation(animation).getAnimationFrame()<3) {
+    if(animation==AnimationName::KNIGHT_ATTACK&&resources.getAnimation(animation).getAnimationFrame()>2&&resources.getAnimation(animation).getAnimationFrame()<6) {
         damageActive = true;
         if(sprite.getScale().x>0)
             damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);
@@ -77,6 +87,9 @@ void PlayableCharacter::update(const float &dt) {
 
 void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
+    target.draw(*hitbox);
+    if(damageActive)
+        target.draw(*damageHitbox);
 #if DEBUG
     target.draw(*hitbox);
     if(damageActive)

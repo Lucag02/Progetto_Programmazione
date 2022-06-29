@@ -45,6 +45,7 @@ OptionState::OptionState(std::stack<std::unique_ptr<States>> *states, sf::Render
 }
 
 void OptionState::update(const float &dt) {
+    //FIXME resolutionDDM not working properly
     sf::View view=window->getView();
     view.setCenter(view.getSize().x/2,view.getSize().y/2);
     window->setView(view);

@@ -4,13 +4,14 @@
 
 #include "Animation.h"
 Animation::Animation(int startX, int startY, int endX, int endY, int widthOfFrame, int heightOfFrame,
-                     float animationTimer) :
+                     float animationTimer,
+                     bool repeatable) :
         startRect(sf::IntRect(startX*widthOfFrame, startY*heightOfFrame,
                               widthOfFrame, heightOfFrame)),
         endRect(sf::IntRect(endX*widthOfFrame, endY*heightOfFrame,
                             widthOfFrame, heightOfFrame)),
         currentRect(startRect), animationTimer(animationTimer),
-        width(widthOfFrame), height(heightOfFrame),timer(0),playing(true){
+        width(widthOfFrame), height(heightOfFrame),timer(0),playing(true),repeatable(repeatable){
 }
 
 void Animation::play(const float &dt, sf::Sprite &sprite){
@@ -30,7 +31,7 @@ void Animation::play(const float &dt, sf::Sprite &sprite){
             playing=false;
             currentRect = startRect;
         }
-        if(playing)
+        if(playing||repeatable)
             sprite.setTextureRect(currentRect);
     }
 }

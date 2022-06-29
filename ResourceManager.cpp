@@ -4,7 +4,7 @@
 #include "ResourceManager.h"
 ResourceManager::ResourceManager():textures(std::make_shared<std::map<std::string,sf::Texture>>()) {
 }
-void ResourceManager::playAnimation(const std::string& name,const float& dt,sf::Sprite& sprite) {
+void ResourceManager::playAnimation(AnimationName name, const float& dt, sf::Sprite& sprite) {
     animations.at(name).play(dt,sprite);
 }
 void ResourceManager::addTexture(const std::string& name,const std::string& filepath) {
@@ -18,11 +18,12 @@ const sf::Texture& ResourceManager::getTexture(const std::string& name) const{
 }
 
 void
-ResourceManager::addAnimation(const std::string &AnimationName, int width, int height, int startX, int startY, int endX,
-                              int endY, float animationTimer) {
-    animations.insert({AnimationName, Animation(startX, startY, endX, endY, width, height, animationTimer)});
+ResourceManager::addAnimation(AnimationName animationName, int width, int height, int startX, int startY, int endX,
+                              int endY,
+                              float animationTimer, bool repeatable) {
+    animations.insert({animationName, Animation(startX, startY, endX, endY, width, height, animationTimer, repeatable)});
 }
 
-const Animation & ResourceManager::getAnimation(const std::string &animationName) {
+const Animation & ResourceManager::getAnimation(AnimationName animationName) {
     return animations.at(animationName);
 }

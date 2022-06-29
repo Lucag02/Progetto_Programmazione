@@ -8,7 +8,6 @@
 Map::Map(const sf::Texture &texture, ResourceManager &enemyResources, PlayableCharacter &player,
          std::vector<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
                                                          tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(20), enemyResources(enemyResources){
-    //TODO maybe use enum for tiles
     tiles[TileType::VOID]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
     tiles[TileType::GRASS]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
     tiles[TileType::TERRAIN]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
@@ -36,9 +35,9 @@ void Map::update(const float &dt) {
                  player.undoMove();
          }
     Enemy::updateTimer(dt);
-    //FIXME fix enemies sometimes stuck on corners
     if(Enemy::canChangeDirection()){
-        pos.y+=0.5;
+        pos.x+=size.x/2;
+        pos.y+=size.y/2;
         map[pos.x][pos.y].distance=0;
         map[pos.x+1][pos.y].distance=1;
         map[pos.x][pos.y+1].distance=1;
@@ -94,8 +93,6 @@ void Map::update(const float &dt) {
     for(auto & enemy : enemies){
          hitbox=enemy->getHitbox();
          pos=hitbox.getPosition();
-         pos.x+=hitbox.getSize().x/2;
-         pos.y+=hitbox.getSize().y/2;
          pos.x/=tileWidth;
          pos.y/=tileHeight;
          size=hitbox.getSize();
@@ -111,6 +108,8 @@ void Map::update(const float &dt) {
                      enemy->undoMove();
                  }
          }
+        pos.x+=(hitbox.getSize().x/2)/tileWidth;
+        pos.y+=(hitbox.getSize().y/2)/tileHeight;
         if(enemy->isAggroed()&&Enemy::canChangeDirection())
             enemy->setDirection(getDiredctionToPlayer(pos.x,pos.y));
     }
@@ -241,7 +240,6 @@ void Map::placeRooms() {
             i--;
     }
 }
-
 void Map::createCorridors(const Room &room1, const Room &room2) {
     if(abs(room1.getCenter().x-room2.getCenter().x)>100)
         return;
@@ -272,10 +270,16 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
             map[i][startY + 2].setTile(TileType::WALL,tiles);
     }
     bool isStartYBigger= startY>endY;
-    if(map[endX+1][startY+1-2*!isStartYBigger].type!=TileType::TERRAIN)
-        map[endX + 1][startY + 1 - 2 * !isStartYBigger].setTile(TileType::WALL,tiles);
-    if(map[endX][startY+1-2*!isStartYBigger].type!=TileType::TERRAIN)
-        map[endX][startY+1-2*!isStartYBigger].setTile(TileType::WALL,tiles);
+    map[endX+1][startY+1-2*!isStartYBigger].setTile(TileType::TERRAIN,tiles);
+    map[endX][startY+1-2*!isStartYBigger].setTile(TileType::TERRAIN,tiles);
+    if(map[endX][startY+2-4*!isStartYBigger].type!=TileType::TERRAIN)
+        map[endX][startY + 2 - 4 * !isStartYBigger].setTile(TileType::WALL,tiles);
+    if(map[endX+1][startY+2-4*!isStartYBigger].type!=TileType::TERRAIN)
+        map[endX + 1][startY + 2 - 4 * !isStartYBigger].setTile(TileType::WALL,tiles);
+    if(map[endX+2][startY+2-4*!isStartYBigger].type!=TileType::TERRAIN)
+        map[endX + 2][startY + 2 - 4 * !isStartYBigger].setTile(TileType::WALL,tiles);
+    if(map[endX+2][startY+1-2*!isStartYBigger].type!=TileType::TERRAIN)
+        map[endX + 2][startY + 1 - 2 * !isStartYBigger].setTile(TileType::WALL,tiles);
     for(int i=startY; i != endY; i+=(1-2*isStartYBigger)){
         if(map[endX - 2][i].type != TileType::TERRAIN)
             map[endX - 2][i].setTile(TileType::WALL,tiles);
