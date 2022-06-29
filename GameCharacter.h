@@ -10,7 +10,8 @@
 #include <SFML/Graphics.hpp>
 #include "ResourceManager.h"
 #include "Hitbox.h"
-
+#define DEBUG 0
+enum class CharacterType {KNIGHT=1,MAGE=2,SLIME=3,SKELETON=4};
 class GameCharacter {
 protected:
     std::unique_ptr<Hitbox> hitbox;
@@ -24,6 +25,7 @@ protected:
     std::unique_ptr<Hitbox> damageHitbox;
     bool damageActive;
     sf::Vector2f scaleFactor;
+    AnimationName animation;
 public:
     explicit GameCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 10, int m = 0,float movespeed = 100,
                            float manaregen = 2);

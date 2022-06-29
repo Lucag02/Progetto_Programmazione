@@ -11,7 +11,7 @@ Animation::Animation(int startX, int startY, int endX, int endY, int widthOfFram
         endRect(sf::IntRect(endX*widthOfFrame, endY*heightOfFrame,
                             widthOfFrame, heightOfFrame)),
         currentRect(startRect), animationTimer(animationTimer),
-        width(widthOfFrame), height(heightOfFrame),timer(0),playing(true),repeatable(repeatable){
+        width(widthOfFrame), height(heightOfFrame),timer(0),playing(!repeatable),repeatable(repeatable){
 }
 
 void Animation::play(const float &dt, sf::Sprite &sprite){
@@ -21,6 +21,7 @@ void Animation::play(const float &dt, sf::Sprite &sprite){
         timer-=animationTimer;
         if(currentRect!=endRect) {
             playing=true;
+            //FIXME
             if (currentRect.left == endRect.left) {
                 currentRect.top += height;
                 currentRect.left = 0;

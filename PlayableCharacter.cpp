@@ -87,9 +87,6 @@ void PlayableCharacter::update(const float &dt) {
 
 void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
-    target.draw(*hitbox);
-    if(damageActive)
-        target.draw(*damageHitbox);
 #if DEBUG
     target.draw(*hitbox);
     if(damageActive)

@@ -7,18 +7,16 @@
 #include "PlayableCharacter.h"
 
 
-enum class enemyType{SKELETON=0,SLIME=1};
-
 class Enemy: public GameCharacter {
 private:
     const static float moveTime;
     static float timer;
     bool active;
-    enemyType type;
+    CharacterType type;
     sf::Vector2i direction;
     bool dead;
-    bool isdying;
     bool aggro;
+    float attackDistance;
 public:
     Enemy(ResourceManager &resources, float x, float y, int type);
     bool isAggroed() const;

@@ -6,8 +6,8 @@
 const float Enemy::moveTime=100;
 float Enemy::timer=0;
 Enemy::Enemy(ResourceManager &resources, float x, float y, int type) : GameCharacter(resources, x, y), type(
-        static_cast<enemyType>(type)),active(false),direction(sf::Vector2i(0,0)),dead(false),isdying(false),aggro(false){
-    if (this->type==enemyType::SKELETON) {
+        static_cast<CharacterType>(type)),active(false),direction(sf::Vector2i(0,0)),dead(false),aggro(false){
+    if (this->type==CharacterType::SKELETON) {
         scaleFactor=sf::Vector2f(1.3,1.3);
         sprite = sf::Sprite(resources.getTexture("SKELETON"));
         sprite.setTextureRect(sf::IntRect(0, 0, 50, 48));
@@ -15,21 +15,28 @@ Enemy::Enemy(ResourceManager &resources, float x, float y, int type) : GameChara
         sprite.setScale(scaleFactor);
         sprite.setPosition(sf::Vector2f(x, y));
         hitbox = std::make_unique<Hitbox>(sprite, 25.f, 40.f, false,10,15);
+        damageHitbox=std::make_unique<Hitbox>(sprite,20.f,40.f,true);
+        animation=AnimationName::SKELETON_MOVE;
+        attackDistance=47;
     }
     else{
         sprite = sf::Sprite(resources.getTexture("SLIME"));
-        scaleFactor=sf::Vector2f(-1,1);
+        scaleFactor=sf::Vector2f(1,1);
         sprite.setTextureRect(sf::IntRect(0, 0, 32, 25));
         sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
         sprite.setPosition(sf::Vector2f(x, y));
         hitbox = std::make_unique<Hitbox>(sprite, 32.f, 18.f, false,15,5);
+        damageHitbox=std::make_unique<Hitbox>(sprite,20.f,18.f,true);
+        animation=AnimationName::SLIME_MOVE;
+        attackDistance=40;
     }
 }
 
 void Enemy::update(const float &dt, PlayableCharacter &player) {
-    if(distanceToPlayer(player.getPosition())<800) {
+    float distance= distanceToPlayer(player.getPosition());
+    if(distance<800) {
         active = true;
-        if (distanceToPlayer(player.getPosition()) < 600)
+        if (distance < 600)
             aggro = true;
         else
             aggro=false;
@@ -50,9 +57,9 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
             std::uniform_int_distribution<> distr(-1, 1);
             direction.x = distr(gen);
             direction.y = distr(gen);
-
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);
-        }else
+        }else if(distance>attackDistance-10&&!resources.getAnimation(
+                static_cast<AnimationName>(static_cast<int>(type)*10+static_cast<int>(AnimationName::ATTACK))).isPlaying())
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);
         hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(),
                             sprite.getPosition().y - hitbox->getOffsetY());
@@ -72,35 +79,40 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
         }
         if (player.isAttacking() && player.getDamageHitbox().intersects(hitbox->getGlobalBounds()))
             hp -= 10;
-        if(hp<1) {
+        if(hp<1)
             dead=true;
-            isdying=true;
+    }
+    if (dead && resources.getAnimation(static_cast<AnimationName>(
+            static_cast<int>(type)*10+static_cast<int>(AnimationName::DEATH))).isPlaying()) {
+        animation =static_cast<AnimationName>(static_cast<int>(type)*10+static_cast<int>(AnimationName::DEATH));
+        resources.playAnimation(animation, dt, sprite);
+    } else if (active && !dead) {
+        if (resources.getAnimation(static_cast<AnimationName>(static_cast<int>(type)*10+
+                static_cast<int>(AnimationName::ATTACK))).isPlaying()|| distance < attackDistance) {
+            animation = static_cast<AnimationName>(static_cast<int>(type)*10+static_cast<int>(AnimationName::ATTACK));
+            damageActive = true;
+            if (sprite.getScale().x > 0)
+                damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);
+            else
+                damageHitbox->setPosition(hitbox->getPosition().x - damageHitbox->getSize().x, hitbox->getPosition().y);
+        } else {
+            damageActive = false;
+            animation = static_cast<AnimationName>(static_cast<int>(type)*10+static_cast<int>(AnimationName::MOVE));
         }
+        resources.playAnimation(animation, dt, sprite);
     }
-    if (type == enemyType::SLIME) {
-        if(isdying&&resources.getAnimation(AnimationName::SLIME_DEATH).isPlaying()) {
-            resources.playAnimation(AnimationName::SLIME_DEATH, dt, sprite);
-        }
-        else
-            if(active&&!dead)
-                resources.playAnimation(AnimationName::SLIME_MOVE, dt, sprite);
-    }
-    else {
-        if (isdying) {
-            resources.playAnimation(AnimationName::SKELETON_DEATH, dt, sprite);
-            if (!resources.getAnimation(AnimationName::SKELETON_DEATH).isPlaying())
-                isdying = false;
-
-        } else if (active && !dead)
-            resources.playAnimation(AnimationName::SKELETON_MOVE, dt, sprite);
-    }
-
 }
 
 void Enemy::render(sf::RenderTarget &target) {
     if(active) {
         target.draw(sprite);
-        //target.draw(*hitbox);
+#if DEBUG
+        if(!dead) {
+            target.draw(*hitbox);
+            if (damageActive)
+                target.draw(*damageHitbox);
+            }
+#endif
     }
 }
 

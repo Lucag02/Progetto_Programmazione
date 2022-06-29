@@ -207,7 +207,7 @@ void Map::placeRooms() {
                         map[j][k].setTile(TileType::TERRAIN,tiles);
                         if(rand()%100==1) {
                             std::unique_ptr<Enemy> enemy=std::make_unique<Enemy>(
-                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2);
+                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2+3);
                             Hitbox hitbox=enemy->getHitbox();
                             sf::Vector2f pos=hitbox.getPosition();
                             pos.x/=tileWidth;
@@ -229,7 +229,7 @@ void Map::placeRooms() {
                             if(!stuck)
                                 enemies.push_back(std::move(enemy));
                             /*enemies.emplace_back(std::make_unique<Enemy>(
-                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2));*/
+                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2+3));*/
                         }
                     }
             for(auto & j : rooms)
@@ -263,7 +263,7 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
         map[i][startY - 1].setTile(TileType::TERRAIN,tiles);
         if(rand()%10==1)
             enemies.emplace_back(std::make_unique<Enemy>(
-                    enemyResources, i * tileWidth, startY * tileHeight, rand() % 2));
+                    enemyResources, i * tileWidth, startY * tileHeight, rand() % 2+3));
         map[i][startY].setTile(TileType::TERRAIN,tiles);
         map[i][startY + 1].setTile(TileType::TERRAIN,tiles);
         if(map[i][startY + 2].type!=TileType::TERRAIN)
@@ -286,7 +286,7 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
         map[endX - 1][i].setTile(TileType::TERRAIN,tiles);
         if(rand()%10==1)
             enemies.emplace_back(std::make_unique<Enemy>(
-                    enemyResources, endX * tileWidth, i * tileHeight, rand() % 2));
+                    enemyResources, endX * tileWidth, i * tileHeight, rand() % 2+3));
         map[endX][i].setTile(TileType::TERRAIN,tiles);
         map[endX + 1][i].setTile(TileType::TERRAIN,tiles);
         if(map[endX + 2][i].type != TileType::TERRAIN)
@@ -315,13 +315,23 @@ float Map::distanceFromPlayer(float x, float y) {
 
 sf::Vector2i Map::getDiredctionToPlayer(float x, float y) {
     sf::Vector2i direction;
+    int posx=player.getPosition().x/tileWidth;
+    int posy=player.getPosition().y/tileHeight;
     float min=800;
     for(int i=-1;i<2;i++)
-        for(int j=-1;j<2;j++)
-            if(map[x+i][y+j].distance>=0&&map[x+i][y+j].distance<min&&(i!=0||j!=0)) {
-                min = map[x + i][y + j].distance;
-                direction=sf::Vector2i (i,j);
+        for(int j=-1;j<2;j++) {
+            if(posx==(int)x+i&&posy==(int)y+j) {
+                min = -1;
+                direction = sf::Vector2i(i, j);
+                i=2;
+                j=2;
             }
+            if (map[x + i][y + j].distance >= 0 && map[x + i][y + j].distance < min && (i != 0 || j != 0)) {
+
+                min = map[x + i][y + j].distance;
+                direction = sf::Vector2i(i, j);
+            }
+        }
     return direction;
 }
 

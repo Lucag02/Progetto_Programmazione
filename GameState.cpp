@@ -62,10 +62,12 @@ void GameState::loadTextures() {
     playerResources.addAnimation(AnimationName::KNIGHT_RUN, 50, 37, 0, 1, 5, 1, 100);
     playerResources.addAnimation(AnimationName::KNIGHT_DEATH, 50, 37, 0, 9, 4, 9, 100, false);
     playerResources.addAnimation(AnimationName::KNIGHT_ROLL, 50, 37, 0, 8, 4, 8, 100);
-    enemyResources.addAnimation(AnimationName::SKELETON_MOVE, 50, 48, 0, 1, 5, 1, 150);
-    enemyResources.addAnimation(AnimationName::SKELETON_DEATH, 50, 48, 0, 2, 5, 2, 150, false);
-    enemyResources.addAnimation(AnimationName::SLIME_MOVE, 32, 25, 4, 0, 7, 0, 150);
-    enemyResources.addAnimation(AnimationName::SLIME_DEATH, 32, 25, 1, 2, 4, 2, 150, false);
+    enemyResources.addAnimation(AnimationName::SKELETON_MOVE, 50, 48, 0, 2, 5, 2, 150);
+    enemyResources.addAnimation(AnimationName::SKELETON_ATTACK, 50, 48, 0, 1, 5, 1, 200);
+    enemyResources.addAnimation(AnimationName::SKELETON_DEATH, 50, 48, 0, 3, 5, 3, 150, false);
+    enemyResources.addAnimation(AnimationName::SLIME_MOVE, 32, 25, 0, 4, 3, 4, 150);
+    enemyResources.addAnimation(AnimationName::SLIME_ATTACK, 32, 25, 0, 0, 4, 0, 200);
+    enemyResources.addAnimation(AnimationName::SLIME_DEATH, 32, 25, 0, 1, 3, 1, 150, false);
 }
 GameState::~GameState() {
 
