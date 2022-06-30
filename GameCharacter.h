@@ -11,7 +11,7 @@
 #include "ResourceManager.h"
 #include "Hitbox.h"
 #define DEBUG 0
-enum class CharacterType {KNIGHT=1,MAGE=2,SLIME=3,SKELETON=4};
+enum CharacterType:int {KNIGHT=0,MAGE=1,SLIME=2,SKELETON=3};
 class GameCharacter {
 protected:
     std::unique_ptr<Hitbox> hitbox;

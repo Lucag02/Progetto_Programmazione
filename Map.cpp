@@ -5,7 +5,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include "Map.h"
 
-Map::Map(const sf::Texture &texture, ResourceManager &enemyResources, PlayableCharacter &player,
+Map::Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResources, PlayableCharacter &player,
          std::vector<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
                                                          tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(20), enemyResources(enemyResources){
     tiles[TileType::VOID]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
@@ -206,8 +206,9 @@ void Map::placeRooms() {
                     else {
                         map[j][k].setTile(TileType::TERRAIN,tiles);
                         if(rand()%100==1) {
+                            int enemyType=rand() % 2+2;
                             std::unique_ptr<Enemy> enemy=std::make_unique<Enemy>(
-                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2+3);
+                                    enemyResources[enemyType], j * tileWidth,k * tileHeight, enemyType);
                             Hitbox hitbox=enemy->getHitbox();
                             sf::Vector2f pos=hitbox.getPosition();
                             pos.x/=tileWidth;
@@ -229,7 +230,7 @@ void Map::placeRooms() {
                             if(!stuck)
                                 enemies.push_back(std::move(enemy));
                             /*enemies.emplace_back(std::make_unique<Enemy>(
-                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2+3));*/
+                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2+2));*/
                         }
                     }
             for(auto & j : rooms)
@@ -261,9 +262,11 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
         if(map[i][startY - 2].type != TileType::TERRAIN)
             map[i][startY - 2].setTile(TileType::WALL,tiles);
         map[i][startY - 1].setTile(TileType::TERRAIN,tiles);
-        if(rand()%10==1)
+        if(rand()%10==1) {
+            int enemyType=rand() % 2 + 2;
             enemies.emplace_back(std::make_unique<Enemy>(
-                    enemyResources, i * tileWidth, startY * tileHeight, rand() % 2+3));
+                    enemyResources[enemyType], i * tileWidth, startY * tileHeight, enemyType));
+        }
         map[i][startY].setTile(TileType::TERRAIN,tiles);
         map[i][startY + 1].setTile(TileType::TERRAIN,tiles);
         if(map[i][startY + 2].type!=TileType::TERRAIN)
@@ -284,9 +287,11 @@ void Map::createCorridors(const Room &room1, const Room &room2) {
         if(map[endX - 2][i].type != TileType::TERRAIN)
             map[endX - 2][i].setTile(TileType::WALL,tiles);
         map[endX - 1][i].setTile(TileType::TERRAIN,tiles);
-        if(rand()%10==1)
+        if(rand()%10==1) {
+            int enemyType=rand() % 2 + 2;
             enemies.emplace_back(std::make_unique<Enemy>(
-                    enemyResources, endX * tileWidth, i * tileHeight, rand() % 2+3));
+                    enemyResources[enemyType], endX * tileWidth,  i * tileHeight, enemyType));
+        }
         map[endX][i].setTile(TileType::TERRAIN,tiles);
         map[endX + 1][i].setTile(TileType::TERRAIN,tiles);
         if(map[endX + 2][i].type != TileType::TERRAIN)

@@ -6,8 +6,8 @@
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false){
-    animation=AnimationName::KNIGHT_IDLE;
-    lockAnimation=AnimationName::KNIGHT_IDLE;
+    animation=AnimationName::IDLE;
+    lockAnimation=AnimationName::IDLE;
     //moveSpeed=1000;
     scaleFactor=sf::Vector2f (1.4,1.4);
     sprite=sf::Sprite(resources.getTexture("KNIGHT"));
@@ -21,45 +21,45 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float 
 
 void PlayableCharacter::update(const float &dt) {
     sf::Vector2f move=sf::Vector2f(0,0);
-    animation=AnimationName::KNIGHT_IDLE;
+    animation=AnimationName::IDLE;
     if(!hardLock) {
         if (!animationLock&&sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            lockAnimation = AnimationName::KNIGHT_ATTACK;
+            lockAnimation = AnimationName::ATTACK;
             animationLock = true;
             hardLock=true;
         } else{
             prevPos=sprite.getPosition();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                 move.x-=1;
-                animation = AnimationName::KNIGHT_RUN;
+                animation = AnimationName::MOVE;
                 sprite.setScale(-scaleFactor.x, scaleFactor.y);
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = AnimationName::KNIGHT_ROLL;
+                    lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
                 move.y+=1;
-                animation = AnimationName::KNIGHT_RUN;
+                animation = AnimationName::MOVE;
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = AnimationName::KNIGHT_ROLL;
+                    lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
                 move.x+=1;
-                animation = AnimationName::KNIGHT_RUN;
+                animation = AnimationName::MOVE;
                 sprite.setScale(scaleFactor);
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = AnimationName::KNIGHT_ROLL;
+                    lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
                 move.y-=1;
-                animation = AnimationName::KNIGHT_RUN;
+                animation = AnimationName::MOVE;
                 if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                    lockAnimation = AnimationName::KNIGHT_ROLL;
+                    lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
             }
@@ -67,13 +67,13 @@ void PlayableCharacter::update(const float &dt) {
     }
     if(animationLock)
         animation=lockAnimation;
-    if(animation==AnimationName::KNIGHT_ROLL) {
+    if(animation==AnimationName::ROLL) {
         move.x *= 1.6;
         move.y *= 1.6;
     }
     sprite.move(move*dt*moveSpeed);
     hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(), sprite.getPosition().y - hitbox->getOffsetY());
-    if(animation==AnimationName::KNIGHT_ATTACK&&resources.getAnimation(animation).getAnimationFrame()>2&&resources.getAnimation(animation).getAnimationFrame()<6) {
+    if(animation==AnimationName::ATTACK&&resources.getAnimation(animation).getAnimationFrame()>2&&resources.getAnimation(animation).getAnimationFrame()<6) {
         damageActive = true;
         if(sprite.getScale().x>0)
             damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);

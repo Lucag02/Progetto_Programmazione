@@ -16,9 +16,8 @@ private:
     std::unique_ptr<PlayableCharacter> player;
     std::unique_ptr<Map> map;
     std::vector<std::unique_ptr<Enemy>> enemies;
-    ResourceManager playerResources;
+    std::vector<ResourceManager> charactersResources;
     ResourceManager mapResources;
-    ResourceManager enemyResources;
     void loadTextures();
 #if DEBUG
     float dT;

@@ -7,9 +7,12 @@
 GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow *w) :view(w->getView()) {
     window=w;
     this->states=states;
+    for (int i=KNIGHT;i<=SKELETON;i++)
+        charactersResources.emplace_back();
     loadTextures();
-    player=std::make_unique<PlayableCharacter>(playerResources);
-    map=std::make_unique<Map>(mapResources.getTexture("TILES"),enemyResources,*player,enemies);
+    player=std::make_unique<PlayableCharacter>(charactersResources[KNIGHT]);
+    map=std::make_unique<Map>(mapResources.getTexture("TILES"),charactersResources,*player,enemies);
+
 }
 
 void GameState::update(const float &dt) {
@@ -54,20 +57,20 @@ void GameState::render(sf::RenderTarget &target) {
 
 void GameState::loadTextures() {
     mapResources.addTexture("TILES","../Resources/DungeonCrawl_ProjectUtumnoTileset.png");
-    playerResources.addTexture("KNIGHT","../Resources/Knight.png");
-    enemyResources.addTexture("SKELETON","../Resources/Skeleton.png");
-    enemyResources.addTexture("SLIME","../Resources/Slime.png");
-    playerResources.addAnimation(AnimationName::KNIGHT_ATTACK, 50, 37, 0, 4, 9, 4, 90);
-    playerResources.addAnimation(AnimationName::KNIGHT_IDLE, 50, 37, 0, 0, 3, 0, 100);
-    playerResources.addAnimation(AnimationName::KNIGHT_RUN, 50, 37, 0, 1, 5, 1, 100);
-    playerResources.addAnimation(AnimationName::KNIGHT_DEATH, 50, 37, 0, 9, 4, 9, 100, false);
-    playerResources.addAnimation(AnimationName::KNIGHT_ROLL, 50, 37, 0, 8, 4, 8, 100);
-    enemyResources.addAnimation(AnimationName::SKELETON_MOVE, 50, 48, 0, 2, 5, 2, 150);
-    enemyResources.addAnimation(AnimationName::SKELETON_ATTACK, 50, 48, 0, 1, 5, 1, 200);
-    enemyResources.addAnimation(AnimationName::SKELETON_DEATH, 50, 48, 0, 3, 5, 3, 150, false);
-    enemyResources.addAnimation(AnimationName::SLIME_MOVE, 32, 25, 0, 4, 3, 4, 150);
-    enemyResources.addAnimation(AnimationName::SLIME_ATTACK, 32, 25, 0, 0, 4, 0, 200);
-    enemyResources.addAnimation(AnimationName::SLIME_DEATH, 32, 25, 0, 1, 3, 1, 150, false);
+    charactersResources[KNIGHT].addTexture("KNIGHT","../Resources/Knight.png");
+    charactersResources[SKELETON].addTexture("SKELETON","../Resources/Skeleton.png");
+    charactersResources[SLIME].addTexture("SLIME","../Resources/Slime.png");
+    charactersResources[KNIGHT].addAnimation(AnimationName::ATTACK, 50, 37, 0, 4, 9, 4, 90);
+    charactersResources[KNIGHT].addAnimation(AnimationName::IDLE, 50, 37, 0, 0, 3, 0, 100);
+    charactersResources[KNIGHT].addAnimation(AnimationName::MOVE, 50, 37, 0, 1, 5, 1, 100);
+    charactersResources[KNIGHT].addAnimation(AnimationName::DEATH, 50, 37, 0, 9, 4, 9, 100, false);
+    charactersResources[KNIGHT].addAnimation(AnimationName::ROLL, 50, 37, 0, 8, 4, 8, 100);
+    charactersResources[SKELETON].addAnimation(AnimationName::MOVE, 50, 48, 0, 2, 5, 2, 150);
+    charactersResources[SKELETON].addAnimation(AnimationName::ATTACK, 50, 48, 0, 1, 5, 1, 200);
+    charactersResources[SKELETON].addAnimation(AnimationName::DEATH, 50, 48, 0, 3, 5, 3, 150, false);
+    charactersResources[SLIME].addAnimation(AnimationName::MOVE, 32, 25, 0, 4, 3, 4, 150);
+    charactersResources[SLIME].addAnimation(AnimationName::ATTACK, 32, 25, 0, 0, 4, 0, 200);
+    charactersResources[SLIME].addAnimation(AnimationName::DEATH, 32, 25, 0, 1, 3, 1, 150, false);
 }
 GameState::~GameState() {
 

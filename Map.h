@@ -45,11 +45,11 @@ private:
     int sizeY;
     std::vector<std::unique_ptr<Enemy>>& enemies;
     PlayableCharacter& player;
-    ResourceManager& enemyResources;
+    std::vector<ResourceManager>& enemyResources;
     float distanceFromPlayer(float x, float y);
 public:
-    Map(const sf::Texture &texture, ResourceManager &enemyResources, PlayableCharacter &player,
-                 std::vector<std::unique_ptr<Enemy>> &enemies);
+    Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResources, PlayableCharacter &player,
+        std::vector<std::unique_ptr<Enemy>> &enemies);
     void update(const float &dt);
     void render(sf::RenderTarget &target);
     void createMap();
