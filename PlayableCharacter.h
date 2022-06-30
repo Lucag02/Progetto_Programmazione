@@ -22,6 +22,8 @@ public:
     bool isAttacking() const;
     Hitbox& getDamageHitbox();
     sf::Vector2f getPosition();
+    int getHealth() const;
+    void getHit(int damage);
     ~PlayableCharacter() override;
 private:
     bool animationLock;

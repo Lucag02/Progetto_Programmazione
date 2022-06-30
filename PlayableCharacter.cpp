@@ -6,9 +6,10 @@
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false){
+    hp=300;
+    //moveSpeed=1000;
     animation=AnimationName::IDLE;
     lockAnimation=AnimationName::IDLE;
-    //moveSpeed=1000;
     scaleFactor=sf::Vector2f (1.4,1.4);
     sprite=sf::Sprite(resources.getTexture("KNIGHT"));
     sprite.setTextureRect(sf::IntRect(0,0,50,37));
@@ -135,5 +136,13 @@ bool PlayableCharacter::isAttacking() const {
 
 Hitbox &PlayableCharacter::getDamageHitbox() {
     return *damageHitbox;
+}
+
+int PlayableCharacter::getHealth() const {
+    return hp;
+}
+
+void PlayableCharacter::getHit(int damage) {
+    hp-=damage;
 }
 

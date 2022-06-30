@@ -6,7 +6,7 @@
 const float Enemy::moveTime=100;
 float Enemy::timer=0;
 Enemy::Enemy(ResourceManager &resources, float x, float y, int type) : GameCharacter(resources, x, y), type(
-        static_cast<CharacterType>(type)),active(false),direction(sf::Vector2i(0,0)),dead(false),aggro(false){
+        static_cast<CharacterType>(type)),active(false),direction(sf::Vector2i(0,0)),dead(false),aggro(false),hasHit(false){
     if (this->type==CharacterType::SKELETON) {
         scaleFactor=sf::Vector2f(1.3,1.3);
         sprite = sf::Sprite(resources.getTexture("SKELETON"));
@@ -87,12 +87,23 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
     } else if (active && !dead) {
         if (resources.getAnimation(AnimationName::ATTACK).isPlaying()|| distance < attackDistance) {
             animation = AnimationName::ATTACK;
-            damageActive = true;
-            if (sprite.getScale().x > 0)
-                damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);
+            int animationFrame=resources.getAnimation(AnimationName::ATTACK).getAnimationFrame();
+            if(animationFrame>1&&animationFrame<5) {
+                damageActive = true;
+                if (sprite.getScale().x > 0)
+                    damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);
+                else
+                    damageHitbox->setPosition(hitbox->getPosition().x - damageHitbox->getSize().x,
+                                              hitbox->getPosition().y);
+                if(!hasHit&&player.getHitbox().intersects(damageHitbox->getGlobalBounds())) {
+                    player.getHit(10);
+                    hasHit=true;
+                }
+            }
             else
-                damageHitbox->setPosition(hitbox->getPosition().x - damageHitbox->getSize().x, hitbox->getPosition().y);
+                hasHit=false;
         } else {
+            hasHit=false;
             damageActive = false;
             animation = AnimationName::MOVE;
         }

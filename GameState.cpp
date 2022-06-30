@@ -12,7 +12,7 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
     loadTextures();
     player=std::make_unique<PlayableCharacter>(charactersResources[KNIGHT]);
     map=std::make_unique<Map>(mapResources.getTexture("TILES"),charactersResources,*player,enemies);
-
+    health=std::make_unique<Bar>(5,5,player->getHealth(),sf::Color::Red);
 }
 
 void GameState::update(const float &dt) {
@@ -25,15 +25,17 @@ void GameState::update(const float &dt) {
     for(auto& enemy:enemies)
         enemy->update(dt, *player);
     map->update(dt);
+    view.setCenter(player->getPosition());
+    window->setView(view);
+    health->update(view, player->getHealth());
 }
 
 void GameState::render(sf::RenderTarget &target) {
     map->render(target);
-    view.setCenter(player->getPosition());
-    window->setView(view);
     for(auto& enemy: enemies)
         enemy->render(target);
     player->render(target);
+    health->render(target);
     updateMousePos();
 #if DEBUG
     sf::Text mousePosText;
@@ -72,6 +74,33 @@ void GameState::loadTextures() {
     charactersResources[SLIME].addAnimation(AnimationName::ATTACK, 32, 25, 0, 0, 4, 0, 200);
     charactersResources[SLIME].addAnimation(AnimationName::DEATH, 32, 25, 0, 1, 3, 1, 150, false);
 }
-GameState::~GameState() {
+GameState::~GameState() {}
 
+const float GameState::Bar::barHeight=10;
+GameState::Bar::Bar(float x, float y, float size, sf::Color color):offset(sf::Vector2f(x,y)) {
+    container.setPosition(x,y);
+    container.setSize(sf::Vector2f(size,barHeight));
+    container.setFillColor(sf::Color::Transparent);
+    container.setOutlineThickness(2);
+    container.setOutlineColor(color);
+    bar.setPosition(x,y);
+    bar.setSize(sf::Vector2f(size,barHeight));
+    bar.setFillColor(color);
+    bar.setOutlineThickness(0);
+    bar.setOutlineColor(sf::Color::Transparent);
+}
+
+void GameState::Bar::update(const sf::View &currentView, float width) {
+    sf::Vector2f viewSize=sf::Vector2f (currentView.getSize().x/2,currentView.getSize().y/2);
+    container.setPosition(currentView.getCenter()-viewSize+offset);
+    bar.setPosition(currentView.getCenter()-viewSize+offset);
+    if(width>0)
+        bar.setSize(sf::Vector2f(width,barHeight));
+    else
+        bar.setSize(sf::Vector2f(0,barHeight));
+}
+
+void GameState::Bar::render(sf::RenderTarget &target) {
+    target.draw(container);
+    target.draw(bar);
 }

@@ -17,6 +17,7 @@ private:
     bool dead;
     bool aggro;
     float attackDistance;
+    bool hasHit;
 public:
     Enemy(ResourceManager &resources, float x, float y, int type);
     bool isAggroed() const;
