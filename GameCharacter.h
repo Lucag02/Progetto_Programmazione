@@ -10,7 +10,7 @@
 #include <SFML/Graphics.hpp>
 #include "ResourceManager.h"
 #include "Hitbox.h"
-#define DEBUG 0
+#define DEBUG 1
 enum CharacterType:int {KNIGHT=0,MAGE=1,SLIME=2,SKELETON=3};
 class GameCharacter {
 protected:

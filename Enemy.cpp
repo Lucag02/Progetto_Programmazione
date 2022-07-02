@@ -63,19 +63,7 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
         hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(),
                             sprite.getPosition().y - hitbox->getOffsetY());
         //FIXME collision don't work properly
-        if (player.getHitbox().intersects(hitbox->getGlobalBounds())) {
-            sprite.setPosition(prevPos);
-            sf::Vector2f move = player.getPrevPos() - player.getPosition();
-            sprite.move(-move.x/2, -move.y/2);
-            hitbox->move(-move.x/2, -move.y/2);
-            player.move(move.x/2, move.y/2);
-            if (player.getHitbox().intersects(hitbox->getGlobalBounds())) {
-                sprite.move(move.x/2, move.y/2);
-                hitbox->move(move.x/2, move.y/2);
-            }
-            if (player.getHitbox().intersects(hitbox->getGlobalBounds()))
-                player.move(move.x/2, move.y/2);
-        }
+        checkCollisionWithPlayer(player);
         if (player.isAttacking() && player.getDamageHitbox().intersects(hitbox->getGlobalBounds()))
             hp -= 10;
         if(hp<1)
@@ -140,13 +128,29 @@ void Enemy::setDirection(const sf::Vector2i &dir) {
     direction=dir;
 }
 
-bool Enemy::canChangeDirection() {
+bool Enemy::checkTimer() {
     return timer>moveTime;
 }
 
 void Enemy::resetTimer() {
     if(timer>moveTime)
         timer-=moveTime;
+}
+
+void Enemy::checkCollisionWithPlayer(PlayableCharacter &player) {
+    if (player.getHitbox().intersects(hitbox->getGlobalBounds())) {
+        sprite.setPosition(prevPos);
+        sf::Vector2f move = player.getPrevPos() - player.getPosition();
+        sprite.move(-move.x/2, -move.y/2);
+        hitbox->move(-move.x/2, -move.y/2);
+        player.move(move.x/2, move.y/2);
+        if (player.getHitbox().intersects(hitbox->getGlobalBounds())) {
+            sprite.move(move.x/2, move.y/2);
+            hitbox->move(move.x/2, move.y/2);
+        }
+        if (player.getHitbox().intersects(hitbox->getGlobalBounds()))
+            player.move(move.x/2, move.y/2);
+    }
 }
 
 

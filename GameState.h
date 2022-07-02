@@ -30,6 +30,7 @@ private:
     std::vector<ResourceManager> charactersResources;
     ResourceManager mapResources;
     std::unique_ptr<Bar> health;
+    //TODO add stamina and mana
     std::unique_ptr<Bar> stamina;
     std::unique_ptr<Bar> mana;
     void loadTextures();

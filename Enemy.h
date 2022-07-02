@@ -19,15 +19,16 @@ private:
     float attackDistance;
     bool hasHit;
 public:
-    Enemy(ResourceManager &resources, float x, float y, int type);
+    explicit Enemy(ResourceManager &resources, float x=0, float y=0, int type=CharacterType::SKELETON);
     bool isAggroed() const;
     void update(const float &dt, PlayableCharacter &player);
     void render(sf::RenderTarget &target) override;
     float distanceToPlayer(sf::Vector2f playerPos);
     static void updateTimer(const float &dt);
-    static bool canChangeDirection();
+    static bool checkTimer();
     static void resetTimer();
     void setDirection(const sf::Vector2i &dir);
+    void checkCollisionWithPlayer(PlayableCharacter &player);
 };
 
 

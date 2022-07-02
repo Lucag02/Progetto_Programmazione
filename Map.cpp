@@ -35,7 +35,7 @@ void Map::update(const float &dt) {
                  player.undoMove();
          }
     Enemy::updateTimer(dt);
-    if(Enemy::canChangeDirection()){
+    if(Enemy::checkTimer()){
         pos.x+=size.x/2;
         pos.y+=size.y/2;
         map[pos.x][pos.y].distance=0;
@@ -110,7 +110,7 @@ void Map::update(const float &dt) {
          }
         pos.x+=(hitbox.getSize().x/2)/tileWidth;
         pos.y+=(hitbox.getSize().y/2)/tileHeight;
-        if(enemy->isAggroed()&&Enemy::canChangeDirection())
+        if(enemy->isAggroed()&& Enemy::checkTimer())
             enemy->setDirection(getDiredctionToPlayer(pos.x,pos.y));
     }
     Enemy::resetTimer();
@@ -229,8 +229,6 @@ void Map::placeRooms() {
                                 }
                             if(!stuck)
                                 enemies.push_back(std::move(enemy));
-                            /*enemies.emplace_back(std::make_unique<Enemy>(
-                                    enemyResources, j * tileWidth, k * tileHeight, rand() % 2+2));*/
                         }
                     }
             for(auto & j : rooms)
