@@ -30,10 +30,17 @@ private:
     std::vector<ResourceManager> charactersResources;
     ResourceManager mapResources;
     std::unique_ptr<Bar> health;
-    //TODO add stamina and mana
     std::unique_ptr<Bar> stamina;
-    std::unique_ptr<Bar> mana;
+    //TODO put the miniMap in a vertx array to improve performance
+    std::vector<std::vector<sf::RectangleShape>> miniMap;
+    bool paused;
+    bool miniMapOpen;
+    const static float keyTime;
+    float keyTimer;
     void loadTextures();
+    void createMiniMap();
+    void updateMiniMap();
+    void renderMiniMap(sf::RenderTarget& target);
 #if DEBUG
     float dT;
 #endif

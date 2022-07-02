@@ -338,6 +338,14 @@ sf::Vector2i Map::getDiredctionToPlayer(float x, float y) {
     return direction;
 }
 
+const std::vector<std::vector<Map::Tile>> &Map::getMap() {
+    return map;
+}
+
+sf::Vector2i Map::getMapSize() const {
+    return sf::Vector2i(sizeX,sizeY);
+}
+
 Map::Room::Room(int width, int height, int x, int y):
         topLeftCoordinates(x,y), width(width),height(height){}
 

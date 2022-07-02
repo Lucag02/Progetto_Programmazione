@@ -3,10 +3,9 @@
 //
 #include "PlayableCharacter.h"
 
-PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m, float movespeed,
+PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m,int stamina, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
-                                                        animationLock(false), hardLock(false){
-    hp=300;
+                                                        animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina){
     //moveSpeed=1000;
     animation=AnimationName::IDLE;
     lockAnimation=AnimationName::IDLE;
@@ -23,6 +22,9 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float 
 void PlayableCharacter::update(const float &dt) {
     sf::Vector2f move=sf::Vector2f(0,0);
     animation=AnimationName::IDLE;
+    stamina++;
+    if(stamina>maxStamina)
+        stamina=maxStamina;
     if(!hardLock) {
         if (!animationLock&&sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             lockAnimation = AnimationName::ATTACK;
@@ -34,7 +36,7 @@ void PlayableCharacter::update(const float &dt) {
                 move.x-=1;
                 animation = AnimationName::MOVE;
                 sprite.setScale(-scaleFactor.x, scaleFactor.y);
-                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)&&stamina>40) {
                     lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
@@ -42,7 +44,7 @@ void PlayableCharacter::update(const float &dt) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
                 move.y+=1;
                 animation = AnimationName::MOVE;
-                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)&&stamina>40) {
                     lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
@@ -51,7 +53,7 @@ void PlayableCharacter::update(const float &dt) {
                 move.x+=1;
                 animation = AnimationName::MOVE;
                 sprite.setScale(scaleFactor);
-                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)&&stamina>40) {
                     lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
@@ -59,7 +61,7 @@ void PlayableCharacter::update(const float &dt) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
                 move.y-=1;
                 animation = AnimationName::MOVE;
-                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+                if (!animationLock&&sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)&&stamina>40) {
                     lockAnimation = AnimationName::ROLL;
                     animationLock = true;
                 }
@@ -71,6 +73,9 @@ void PlayableCharacter::update(const float &dt) {
     if(animation==AnimationName::ROLL) {
         move.x *= 1.6;
         move.y *= 1.6;
+        stamina-=2;
+        if(stamina<0)
+            stamina=0;
     }
     sprite.move(move*dt*moveSpeed);
     hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(), sprite.getPosition().y - hitbox->getOffsetY());
@@ -144,5 +149,9 @@ int PlayableCharacter::getHealth() const {
 
 void PlayableCharacter::getHit(int damage) {
     hp-=damage;
+}
+
+int PlayableCharacter::getStamina() const {
+    return stamina;
 }
 

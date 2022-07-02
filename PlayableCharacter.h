@@ -9,7 +9,7 @@
 
 class PlayableCharacter: public GameCharacter{
 public:
-    explicit PlayableCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 10, int m = 0,
+    explicit PlayableCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 300, int m = 0,int stamina=200,
                                float movespeed = 150, float manaregen = 2);
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
@@ -23,9 +23,12 @@ public:
     Hitbox& getDamageHitbox();
     sf::Vector2f getPosition();
     int getHealth() const;
+    int getStamina() const;
     void getHit(int damage);
     ~PlayableCharacter() override;
 private:
+    int maxStamina;
+    int stamina;
     bool animationLock;
     bool hardLock;
     AnimationName lockAnimation;

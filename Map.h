@@ -12,7 +12,7 @@
 #include "PlayableCharacter.h"
 #include "Enemy.h"
 class Map {
-private:
+public:
     enum class TileType{VOID=0,WALL=1,TERRAIN=2,GRASS=3};
     struct Tile{
         TileType type=TileType::GRASS;
@@ -24,6 +24,7 @@ private:
             type=tileType;
         }
     };
+private:
     class Room {
     public:
         Room(int width,int height,int x, int y);
@@ -55,6 +56,8 @@ public:
     void createMap();
     void placeRooms();
     void createCorridors(const Room &room1, const Room &room2);
+    const std::vector<std::vector<Tile>>& getMap();
+    sf::Vector2i getMapSize() const;
     sf::Vector2i getDiredctionToPlayer(float x, float y);
 };
 

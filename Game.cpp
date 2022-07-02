@@ -54,9 +54,9 @@ void Game::checkEvent() {
     while (window->pollEvent(event))
     {
         if (event.type == sf::Event::KeyPressed)
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+                if(typeid(*(states.top()))!=typeid(GameState))
                     states.pop();
-            }
         if(event.type==sf::Event::Closed)
             window->close();
     }
