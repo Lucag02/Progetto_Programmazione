@@ -3,7 +3,7 @@
 //
 
 #include "GameState.h"
-const float GameState::keyTime=500;
+const float GameState::keyTime=300;
 GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow *w) :view(w->getView()),keyTimer(0),
         paused(false),miniMapOpen(false){
     window=w;
@@ -118,7 +118,7 @@ void GameState::createMiniMap() {
                     miniMap[i][j].setFillColor(sf::Color(140,107,83));
                     break;
                 case Map::TileType::GRASS:
-                    miniMap[i][j].setFillColor(sf::Color::Green);
+                    miniMap[i][j].setFillColor(sf::Color(0,102,0));
                     break;
                 case Map::TileType::WALL:
                     miniMap[i][j].setFillColor(sf::Color(170,170,10));
@@ -147,6 +147,12 @@ void GameState::renderMiniMap(sf::RenderTarget &target) {
         for(int j=0;j<sizeY;j++) {
             target.draw(miniMap[i][j]);
         }
+    sf::RectangleShape playerMarker;
+    playerMarker.setSize(sf::Vector2f(5,5));
+    playerMarker.setFillColor(sf::Color::Red);
+    playerMarker.setPosition(view.getCenter().x-sizeX/2+player->getPosition().x/map->getTileWidth(),
+                             view.getCenter().y-sizeY/2+player->getPosition().y/map->getTileHeight());
+    target.draw(playerMarker);
 }
 
 GameState::~GameState() {}

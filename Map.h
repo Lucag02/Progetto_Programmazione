@@ -59,6 +59,8 @@ public:
     const std::vector<std::vector<Tile>>& getMap();
     sf::Vector2i getMapSize() const;
     sf::Vector2i getDiredctionToPlayer(float x, float y);
+    int getTileWidth() const;
+    int getTileHeight() const;
 };
 
 #endif //PROGETTO_PROGRAMMAZIONE_MAP_H

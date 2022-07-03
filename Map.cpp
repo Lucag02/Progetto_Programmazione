@@ -7,7 +7,7 @@
 
 Map::Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResources, PlayableCharacter &player,
          std::vector<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
-                                                         tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(20), enemyResources(enemyResources){
+                                                         tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(30), enemyResources(enemyResources){
     tiles[TileType::VOID]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
     tiles[TileType::GRASS]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
     tiles[TileType::TERRAIN]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
@@ -344,6 +344,14 @@ const std::vector<std::vector<Map::Tile>> &Map::getMap() {
 
 sf::Vector2i Map::getMapSize() const {
     return sf::Vector2i(sizeX,sizeY);
+}
+
+int Map::getTileWidth() const {
+    return tileWidth;
+}
+
+int Map::getTileHeight() const {
+    return tileHeight;
 }
 
 Map::Room::Room(int width, int height, int x, int y):
