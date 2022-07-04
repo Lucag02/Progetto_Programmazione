@@ -12,19 +12,26 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
         charactersResources.emplace_back();
     loadTextures();
     player=std::make_unique<PlayableCharacter>(charactersResources[KNIGHT]);
-    map=std::make_unique<Map>(mapResources.getTexture("TILES"),charactersResources,*player,enemies);
+    map=std::make_unique<Map>(tileMap,charactersResources,*player,enemies);
     health=std::make_unique<Bar>(5,5,player->getHealth(),sf::Color::Red);
     stamina=std::make_unique<Bar>(5,20,player->getStamina(),sf::Color::Green);
     createMiniMap();
+    background.setSize(view.getSize());
+    background.setFillColor(sf::Color(0,0,0,100));
+
 }
 
 void GameState::update(const float &dt) {
 #if DEBUG
     dT=dt;
 #endif
+    updateMousePos();
     keyTimer+=dt*1000;
     if(keyTimer>keyTime) {
+        sf::Vector2f viewPos=sf::Vector2f(view.getCenter().x - view.getSize().x / 2, view.getCenter().y - view.getSize().y / 2);
+        background.setPosition(viewPos);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            inventory.updatePosition(viewPos);
             keyTimer=0;
             paused = !paused;
             if(miniMapOpen)
@@ -41,33 +48,56 @@ void GameState::update(const float &dt) {
         player->update(dt);
         if (player->isAnimationLocked() && !player->isAnimationPlaying())
             player->setAnimationLock(false);
-        for (auto &enemy: enemies)
-            enemy->update(dt, *player);
+        auto enemy=enemies.begin();
+        while(enemy!=enemies.end()) {
+            (*enemy)->update(dt, *player);
+            auto nextEnemy=++enemy;
+            enemy--;
+            if((*enemy)->isDead()&&!(*enemy)->isDying()){
+                if(rand()%5==1)
+                    groundItems.emplace_back(std::make_unique<Item>(tileMap,font,(*enemy)->getPosition().x,(*enemy)->getPosition().y,rand()%2));
+                enemies.erase(enemy);
+            }
+            enemy=nextEnemy;
+        }
+        auto item=groundItems.begin();
+        while(item!=groundItems.end()){
+            auto nextItem=++item;
+            (*(--item))->update(*player, mousePos, groundItems, inventory.getItems());
+            item=nextItem;;
+        }
         map->update(dt);
         view.setCenter(player->getPosition());
         window->setView(view);
         health->update(view, player->getHealth());
         stamina->update(view, player->getStamina());
     }
+    else {
+        if(!miniMapOpen) {
+            inventory.update(*player, mousePos, groundItems);
+            health->update(view, player->getHealth());
+        }
+    }
 }
 
 void GameState::render(sf::RenderTarget &target) {
     map->render(target);
-    for(auto& enemy: enemies)
+    for(auto& item:groundItems)
+        item->render(target);
+    for(auto& enemy: enemies) {
         enemy->render(target);
+    }
     player->render(target);
     health->render(target);
     stamina->render(target);
     if(paused) {
-        sf::RectangleShape background;
-        background.setSize(view.getSize());
-        background.setFillColor(sf::Color(0,0,0,100));
-        background.setPosition(view.getCenter().x-view.getSize().x/2,view.getCenter().y-view.getSize().y/2);
         target.draw(background);
         if(miniMapOpen)
             renderMiniMap(target);
+        else
+            inventory.render(target);
     }
-    updateMousePos();
+
 #if DEBUG
     sf::Text mousePosText;
     sf::Font font;
@@ -89,7 +119,8 @@ void GameState::render(sf::RenderTarget &target) {
 }
 
 void GameState::loadTextures() {
-    mapResources.addTexture("TILES","../Resources/DungeonCrawl_ProjectUtumnoTileset.png");
+    font.loadFromFile("../Config/ComicSans.ttf");
+    tileMap.loadFromFile("../Resources/DungeonCrawl_ProjectUtumnoTileset.png");
     charactersResources[KNIGHT].addTexture("KNIGHT","../Resources/Knight.png");
     charactersResources[SKELETON].addTexture("SKELETON","../Resources/Skeleton.png");
     charactersResources[SLIME].addTexture("SLIME","../Resources/Slime.png");
@@ -184,4 +215,50 @@ void GameState::Bar::update(const sf::View &currentView, float width) {
 void GameState::Bar::render(sf::RenderTarget &target) {
     target.draw(container);
     target.draw(bar);
+}
+
+GameState::Inventory::Inventory():size(32) {
+    background.setSize(sf::Vector2f(600,320));
+    background.setFillColor(sf::Color(0,0,0,100));
+    for(int i=0;i<size;i++)
+        containers.emplace_back();
+    for(auto& i:containers) {
+        i.setFillColor(sf::Color(224,224,224,100));
+        i.setSize(sf::Vector2f(64,64));
+    }
+}
+
+void GameState::Inventory::updatePosition(sf::Vector2f viewPos) {
+    background.setPosition(viewPos.x+100,viewPos.y+55);
+    int sizeX=background.getSize().x/containers[0].getSize().x-1;
+    int sizeY=background.getSize().y/containers[0].getSize().y-1;
+    for(int i=0;i<sizeX;i++)
+        for(int j=0;j<sizeY;j++)
+            containers[i*sizeY+j].setPosition(viewPos.x+110+i*74,viewPos.y+65+j*74);
+    int i=0;
+    for(auto& item:items) {
+        item->setPosition(containers[i++].getPosition());
+    }
+}
+
+void GameState::Inventory::render(sf::RenderTarget &target) {
+    target.draw(background);
+    for(const auto& container:containers)
+        target.draw(container);
+    for(auto& item:items)
+        item->render(target);
+}
+
+std::list<std::unique_ptr<Item>> &GameState::Inventory::getItems() {
+    return items;
+}
+
+void GameState::Inventory::update(PlayableCharacter &_player, sf::Vector2f mousePos,
+                                  std::list<std::unique_ptr<Item>> &ground_items) {
+    auto item=items.begin();
+    while(item!=items.end()){
+        auto nextItem=++item;
+        (*(--item))->update(_player, mousePos, ground_items, items);
+        item=nextItem;;
+    }
 }

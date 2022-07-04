@@ -476,7 +476,7 @@ limitations):
 Finally, you should be **very cautious** about when to use naggy or strict
 mocks, as they tend to make tests more brittle and harder to maintain. When you
 refactor your code without changing its externally visible behavior, ideally you
-shouldn't need to update any tests. If your code interacts with a naggy mock,
+shouldn't need to updatePosition any tests. If your code interacts with a naggy mock,
 however, you may start to get spammed with warnings as the result of your
 change. Worse, if your code interacts with a strict mock, your tests may start
 to fail and you'll be forced to fix them. Our general recommendation is to use

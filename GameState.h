@@ -4,14 +4,28 @@
 
 #ifndef PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
 #define PROGETTO_PROGRAMMAZIONE_GAMESTATE_H
-
 #include <sstream>
 #include "States.h"
 #include "PlayableCharacter.h"
 #include "ResourceManager.h"
 #include "Map.h"
+#include "Item.h"
 class GameState: public States {
 private:
+    class Inventory{
+    private:
+        int size;
+        sf::RectangleShape background;
+        std::vector<sf::RectangleShape> containers;
+        std::list<std::unique_ptr<Item>> items;
+    public:
+        Inventory();
+        void updatePosition(sf::Vector2f viewPos);
+        void update(PlayableCharacter &player, sf::Vector2f mousePos,
+                    std::list<std::unique_ptr<Item>> &groundItems);
+        void render(sf::RenderTarget& target);
+        std::list<std::unique_ptr<Item>>& getItems();
+    };
     class Bar{
     private:
         sf::Vector2f offset;
@@ -23,16 +37,20 @@ private:
         void update(const sf::View &currentView, float width);
         void render(sf::RenderTarget& target);
     };
+    Inventory inventory;
+    sf::RectangleShape background;
     sf::View view;
     std::unique_ptr<PlayableCharacter> player;
     std::unique_ptr<Map> map;
-    std::vector<std::unique_ptr<Enemy>> enemies;
+    std::list<std::unique_ptr<Enemy>> enemies;
     std::vector<ResourceManager> charactersResources;
-    ResourceManager mapResources;
+    sf::Texture tileMap;
     std::unique_ptr<Bar> health;
     std::unique_ptr<Bar> stamina;
     //TODO put the miniMap in a vertx array to improve performance
     std::vector<std::vector<sf::RectangleShape>> miniMap;
+    std::list<std::unique_ptr<Item>> groundItems;
+    sf::Font font;
     bool paused;
     bool miniMapOpen;
     const static float keyTime;

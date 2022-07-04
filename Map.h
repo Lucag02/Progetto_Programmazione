@@ -9,6 +9,7 @@
 #include <ctime>
 #include <utility>
 #include <vector>
+#include <list>
 #include "PlayableCharacter.h"
 #include "Enemy.h"
 class Map {
@@ -44,13 +45,13 @@ private:
     std::vector<std::vector<Tile>> map;
     int sizeX;
     int sizeY;
-    std::vector<std::unique_ptr<Enemy>>& enemies;
+    std::list<std::unique_ptr<Enemy>>& enemies;
     PlayableCharacter& player;
     std::vector<ResourceManager>& enemyResources;
     float distanceFromPlayer(float x, float y);
 public:
     Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResources, PlayableCharacter &player,
-        std::vector<std::unique_ptr<Enemy>> &enemies);
+        std::list<std::unique_ptr<Enemy>> &enemies);
     void update(const float &dt);
     void render(sf::RenderTarget &target);
     void createMap();

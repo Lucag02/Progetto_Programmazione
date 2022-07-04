@@ -5,7 +5,7 @@
 
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, float x, float y, int HP, int m,int stamina, float movespeed,
                                      float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
-                                                        animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina){
+                                                        animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina),maxHP(HP){
     //moveSpeed=1000;
     animation=AnimationName::IDLE;
     lockAnimation=AnimationName::IDLE;
@@ -153,5 +153,15 @@ void PlayableCharacter::getHit(int damage) {
 
 int PlayableCharacter::getStamina() const {
     return stamina;
+}
+
+void PlayableCharacter::heal(int heal) {
+    hp+=heal;
+    if(hp>maxHP)
+        hp=maxHP;
+}
+
+void PlayableCharacter::increaseSpeed(float speedIncrease) {
+    moveSpeed+=speedIncrease;
 }
 

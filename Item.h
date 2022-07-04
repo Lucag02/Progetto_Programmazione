@@ -7,8 +7,8 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <list>
-#include<memory>
-#include "Hitbox.h"
+#include <memory>
+#include "PlayableCharacter.h"
 
 class Item {
 private:
@@ -17,12 +17,15 @@ private:
     ItemType type;
     sf::Text description;
     bool isOnGround;
-    int listPosition;
+    bool showText;
+    void use(PlayableCharacter& player);
+    const static int maxItems;
 public:
-    explicit Item(const sf::Texture& texture,float x=0,float y=0,int type=0);
-    void update(const Hitbox &hitbox, std::list<std::unique_ptr<Item>> &groundItems,
+    Item(const sf::Texture &texture, const sf::Font &font, float x = 0, float y = 0, int type = 0);
+    void update(PlayableCharacter &player, sf::Vector2f mousePos, std::list<std::unique_ptr<Item>> &groundItems,
                 std::list<std::unique_ptr<Item>> &inventory);
     void render(sf::RenderTarget& target);
+    void setPosition(sf::Vector2f pos);
 };
 
 

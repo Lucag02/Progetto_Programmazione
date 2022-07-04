@@ -6,7 +6,6 @@
 #include <random>
 #include "PlayableCharacter.h"
 
-
 class Enemy: public GameCharacter {
 private:
     const static float moveTime;
@@ -29,6 +28,9 @@ public:
     static void resetTimer();
     void setDirection(const sf::Vector2i &dir);
     void checkCollisionWithPlayer(PlayableCharacter &player);
+    bool isDead() const;
+    bool isDying();
+    sf::Vector2f getPosition() const;
 };
 
 

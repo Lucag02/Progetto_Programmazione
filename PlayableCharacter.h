@@ -25,8 +25,11 @@ public:
     int getHealth() const;
     int getStamina() const;
     void getHit(int damage);
+    void heal(int heal);
+    void increaseSpeed(float speedIncrease);
     ~PlayableCharacter() override;
 private:
+    int maxHP;
     int maxStamina;
     int stamina;
     bool animationLock;

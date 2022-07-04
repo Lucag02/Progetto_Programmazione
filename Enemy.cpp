@@ -153,5 +153,17 @@ void Enemy::checkCollisionWithPlayer(PlayableCharacter &player) {
     }
 }
 
+bool Enemy::isDead() const {
+    return dead;
+}
+
+bool Enemy::isDying() {
+    return resources.getAnimation(AnimationName::DEATH).isPlaying();
+}
+
+sf::Vector2f Enemy::getPosition() const {
+    return sprite.getPosition();
+}
+
 
 

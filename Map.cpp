@@ -3,11 +3,12 @@
 //
 
 #include <SFML/Graphics/Texture.hpp>
+#include <list>
 #include "Map.h"
 
 Map::Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResources, PlayableCharacter &player,
-         std::vector<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
-                                                         tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(30), enemyResources(enemyResources){
+         std::list<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
+                                                       tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(30), enemyResources(enemyResources){
     tiles[TileType::VOID]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
     tiles[TileType::GRASS]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
     tiles[TileType::TERRAIN]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
