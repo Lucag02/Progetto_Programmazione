@@ -8,7 +8,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-enum class AnimationName:int{ATTACK=0,IDLE=1,ROLL=2,DEATH=3,MOVE=4};
+enum class AnimationName:int{ATTACK=0,IDLE,ROLL,DEATH,MOVE,ABILITY,EXPLOSION};
 class Animation {
 private:
     sf::IntRect startRect;

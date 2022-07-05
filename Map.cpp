@@ -105,7 +105,7 @@ void Map::update(const float &dt) {
                      i = size.x;
                  if(j>size.y)
                      j=size.y;
-                 if (map[pos.x + i][pos.y + j].type==TileType::WALL) {
+                 if (map[pos.x + i][pos.y + j].type==TileType::WALL||map[pos.x + i][pos.y + j].type==TileType::GRASS) {
                      enemy->undoMove();
                  }
          }

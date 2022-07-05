@@ -44,6 +44,7 @@ private:
     std::unique_ptr<Map> map;
     std::list<std::unique_ptr<Enemy>> enemies;
     std::vector<ResourceManager> charactersResources;
+    std::vector<ResourceManager> abilityResources;
     sf::Texture tileMap;
     std::unique_ptr<Bar> health;
     std::unique_ptr<Bar> stamina;

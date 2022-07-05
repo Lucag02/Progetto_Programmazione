@@ -7,14 +7,16 @@
 #include "GameCharacter.h"
 #include "Hitbox.h"
 
+enum AbilityType:int {THUNDER=0,THUNDER_STORM};
 class PlayableCharacter: public GameCharacter{
 public:
-    explicit PlayableCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 300, int m = 0,int stamina=200,
-                               float movespeed = 150, float manaregen = 2);
+    explicit PlayableCharacter(ResourceManager &resources, std::vector<ResourceManager> &abilityResources, float x = 0,
+                               float y = 0, int HP = 300, int m = 0, int stamina = 200, float movespeed = 150,
+                               float manaregen = 2);
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
     bool isAnimationPlaying();
-    void update(const float &dt);
+    void update(const float &dt, sf::Vector2f mousePos);
     void render(sf::RenderTarget& target) override;
     void setPosition(float x, float y);
     const sf::Vector2f& getPrevPos();
@@ -26,6 +28,9 @@ public:
     int getStamina() const;
     void getHit(int damage);
     void heal(int heal);
+    AbilityType ability;
+    std::vector<ResourceManager>& abilityResources;
+    std::list<std::unique_ptr<Projectile>> projectiles;
     void increaseSpeed(float speedIncrease);
     ~PlayableCharacter() override;
 private:

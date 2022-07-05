@@ -4,12 +4,14 @@
 
 #ifndef PROGETTO_PROGRAMMAZIONE_GAMECHARACTER_H
 #define PROGETTO_PROGRAMMAZIONE_GAMECHARACTER_H
+#include <list>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "ResourceManager.h"
 #include "Hitbox.h"
+#include "Projectile.h"
 #define DEBUG 0
 enum CharacterType:int {KNIGHT=0,MAGE=1,SLIME=2,SKELETON=3};
 class GameCharacter {

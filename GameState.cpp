@@ -10,8 +10,10 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
     this->states=states;
     for (int i=KNIGHT;i<=SKELETON;i++)
         charactersResources.emplace_back();
+    for(int i=THUNDER;i<=THUNDER_STORM;i++)
+        abilityResources.emplace_back();
     loadTextures();
-    player=std::make_unique<PlayableCharacter>(charactersResources[KNIGHT]);
+    player=std::make_unique<PlayableCharacter>(charactersResources[KNIGHT],abilityResources);
     map=std::make_unique<Map>(tileMap,charactersResources,*player,enemies);
     health=std::make_unique<Bar>(5,5,player->getHealth(),sf::Color::Red);
     stamina=std::make_unique<Bar>(5,20,player->getStamina(),sf::Color::Green);
@@ -45,7 +47,7 @@ void GameState::update(const float &dt) {
         }
     }
     if(!paused) {
-        player->update(dt);
+        player->update(dt, mousePos);
         if (player->isAnimationLocked() && !player->isAnimationPlaying())
             player->setAnimationLock(false);
         auto enemy=enemies.begin();
@@ -124,17 +126,27 @@ void GameState::loadTextures() {
     charactersResources[KNIGHT].addTexture("KNIGHT","../Resources/Knight.png");
     charactersResources[SKELETON].addTexture("SKELETON","../Resources/Skeleton.png");
     charactersResources[SLIME].addTexture("SLIME","../Resources/Slime.png");
+    //TODO put explosion texture inside projectile texture
+    abilityResources[THUNDER].addTexture("PROJECTILE","../Resources/Thunder_projectile.png");
+    abilityResources[THUNDER].addTexture("EXPLOSION","../Resources/Thunder_explosion.png");
+    abilityResources[THUNDER_STORM].addTexture("PROJECTILE","../Resources/Thunderstorm_projectile.png");
+    abilityResources[THUNDER_STORM].addTexture("EXPLOSION","../Resources/Thunder_explosion.png");
     charactersResources[KNIGHT].addAnimation(AnimationName::ATTACK, 50, 37, 0, 4, 9, 4, 90);
     charactersResources[KNIGHT].addAnimation(AnimationName::IDLE, 50, 37, 0, 0, 3, 0, 100);
     charactersResources[KNIGHT].addAnimation(AnimationName::MOVE, 50, 37, 0, 1, 5, 1, 100);
     charactersResources[KNIGHT].addAnimation(AnimationName::DEATH, 50, 37, 0, 9, 4, 9, 100, false);
     charactersResources[KNIGHT].addAnimation(AnimationName::ROLL, 50, 37, 0, 8, 4, 8, 100);
+    charactersResources[KNIGHT].addAnimation(AnimationName::ABILITY, 50, 37, 0, 3, 8, 3, 100);
     charactersResources[SKELETON].addAnimation(AnimationName::MOVE, 50, 48, 0, 2, 5, 2, 150);
     charactersResources[SKELETON].addAnimation(AnimationName::ATTACK, 50, 48, 0, 1, 5, 1, 200);
     charactersResources[SKELETON].addAnimation(AnimationName::DEATH, 50, 48, 0, 3, 5, 3, 150, false);
     charactersResources[SLIME].addAnimation(AnimationName::MOVE, 32, 25, 0, 4, 3, 4, 150);
     charactersResources[SLIME].addAnimation(AnimationName::ATTACK, 32, 25, 0, 0, 4, 0, 200);
     charactersResources[SLIME].addAnimation(AnimationName::DEATH, 32, 25, 0, 1, 3, 1, 150, false);
+    abilityResources[THUNDER].addAnimation(AnimationName::MOVE,32,32,0,0,4,0,100);
+    abilityResources[THUNDER].addAnimation(AnimationName::EXPLOSION,32,32,0,0,5,0,100);
+    abilityResources[THUNDER_STORM].addAnimation(AnimationName::MOVE,48,48,0,0,15,0,100);
+    abilityResources[THUNDER_STORM].addAnimation(AnimationName::EXPLOSION,32,32,0,0,5,0,100);
 }
 void GameState::createMiniMap() {
     const std::vector<std::vector<Map::Tile>>& mapLayout=map->getMap();
