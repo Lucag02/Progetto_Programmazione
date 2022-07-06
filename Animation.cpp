@@ -16,11 +16,11 @@ Animation::Animation(int startX, int startY, int endX, int endY, int widthOfFram
 
 void Animation::play(const float &dt, sf::Sprite &sprite){
     timer += 1000 * dt;
+    playing=true;
     if(timer>=animationTimer)
     {
         timer-=animationTimer;
         if(currentRect!=endRect) {
-            playing=true;
             //FIXME
             if (currentRect.left == endRect.left) {
                 currentRect.top += height;

@@ -8,19 +8,23 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "ResourceManager.h"
+#include "Hitbox.h"
 class Projectile {
 private:
     sf::Sprite sprite;
-    sf::Sprite explosion;
     ResourceManager resources;
     sf::Vector2f direction;
     const static float projectileSpeed;
     bool exploded;
+    std::unique_ptr<Hitbox> hitbox;
+    bool erase;
 public:
     Projectile(const ResourceManager &resources, sf::Vector2f mousePos, float x, float y);
     void update(const float& dt);
     void render(sf::RenderTarget& target);
+    Hitbox& getHitbox();
     void explode();
+    bool canErase() const;
 };
 
 

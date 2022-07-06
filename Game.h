@@ -8,7 +8,7 @@
 
 #include<fstream>
 #include"MenuState.h"
-
+//TODO fix random crashes on map creation
 class Game {
 public:
     Game();

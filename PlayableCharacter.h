@@ -31,7 +31,9 @@ public:
     AbilityType ability;
     std::vector<ResourceManager>& abilityResources;
     std::list<std::unique_ptr<Projectile>> projectiles;
+    std::list<std::unique_ptr<Projectile>>& getProjectiles();
     void increaseSpeed(float speedIncrease);
+    void equipAbility(AbilityType newAbility);
     ~PlayableCharacter() override;
 private:
     int maxHP;

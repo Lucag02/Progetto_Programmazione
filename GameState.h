@@ -10,6 +10,7 @@
 #include "ResourceManager.h"
 #include "Map.h"
 #include "Item.h"
+#include "Button.h"
 class GameState: public States {
 private:
     class Inventory{
@@ -45,6 +46,7 @@ private:
     std::list<std::unique_ptr<Enemy>> enemies;
     std::vector<ResourceManager> charactersResources;
     std::vector<ResourceManager> abilityResources;
+    std::unique_ptr<Button> mainMenuBTN;
     sf::Texture tileMap;
     std::unique_ptr<Bar> health;
     std::unique_ptr<Bar> stamina;

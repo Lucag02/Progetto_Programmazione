@@ -5,7 +5,6 @@
 #define PROGETTO_PROGRAMMAZIONE_ENEMY_H
 #include <random>
 #include "PlayableCharacter.h"
-
 class Enemy: public GameCharacter {
 private:
     const static float moveTime;

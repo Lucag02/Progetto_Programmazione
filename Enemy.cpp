@@ -62,10 +62,16 @@ void Enemy::update(const float &dt, PlayableCharacter &player) {
             sprite.move(direction.x * moveSpeed * dt, direction.y * moveSpeed * dt);
         hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(),
                             sprite.getPosition().y - hitbox->getOffsetY());
-        //FIXME collision don't work properly
         checkCollisionWithPlayer(player);
         if (player.isAttacking() && player.getDamageHitbox().intersects(hitbox->getGlobalBounds()))
             hp -= 10;
+        std::list<std::unique_ptr<Projectile>>& projectiles=player.getProjectiles();
+        for(auto& projectile:projectiles){
+            if(projectile->getHitbox().intersects(hitbox->getGlobalBounds())) {
+                projectile->explode();
+                hp -= 10;
+            }
+        }
         if(hp<1)
             dead=true;
     }

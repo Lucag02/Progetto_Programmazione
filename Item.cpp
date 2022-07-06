@@ -13,13 +13,19 @@ Item::Item(const sf::Texture &texture, const sf::Font &font, float x, float y, i
     description.setCharacterSize(15);
     description.setPosition(x+42,y+10);
     description.setFillColor(sf::Color::White);
-    if(this->type==ItemType::HEALING_POTION) {
-        shape.setTextureRect(sf::IntRect(2 * 32, 25 * 32, 32, 32));
-        description.setString("Restore 30 HP");
-    }
-    else if(this->type==ItemType::SPEED_POTION) {
-        shape.setTextureRect(sf::IntRect(3 * 32, 25 * 32, 32, 32));
-        description.setString("Increase your movement speed");
+    switch(this->type){
+        case(ItemType::HEALING_POTION):
+            shape.setTextureRect(sf::IntRect(2 * 32, 25 * 32, 32, 32));
+            description.setString("Restore 30 HP");
+            break;
+        case(ItemType::SPEED_POTION):
+            shape.setTextureRect(sf::IntRect(3 * 32, 25 * 32, 32, 32));
+            description.setString("Increase your movement speed");
+            break;
+        case(ItemType::THUNDERSTORM_ABILITY):
+            shape.setTextureRect(sf::IntRect(16 * 32, 42 * 32, 32, 32));
+            description.setString("Equip Thunderstorm ability");
+            break;
     }
     shape.setScale(0.7,0.7);
 }
@@ -64,6 +70,9 @@ void Item::use(PlayableCharacter &player) {
             break;
         case(ItemType::SPEED_POTION):
             player.increaseSpeed(10.f);
+            break;
+        case(ItemType::THUNDERSTORM_ABILITY):
+            player.equipAbility(THUNDER_STORM);
             break;
     }
 }

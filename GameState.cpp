@@ -20,6 +20,7 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
     createMiniMap();
     background.setSize(view.getSize());
     background.setFillColor(sf::Color(0,0,0,100));
+    mainMenuBTN=std::make_unique<Button>(325.f,450.f,150.f,50.f,"Main Menu",font);
 
 }
 
@@ -34,6 +35,7 @@ void GameState::update(const float &dt) {
         background.setPosition(viewPos);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             inventory.updatePosition(viewPos);
+            mainMenuBTN->setPosition(sf::Vector2f(viewPos.x+10,viewPos.y+390));
             keyTimer=0;
             paused = !paused;
             if(miniMapOpen)
@@ -57,7 +59,7 @@ void GameState::update(const float &dt) {
             enemy--;
             if((*enemy)->isDead()&&!(*enemy)->isDying()){
                 if(rand()%5==1)
-                    groundItems.emplace_back(std::make_unique<Item>(tileMap,font,(*enemy)->getPosition().x,(*enemy)->getPosition().y,rand()%2));
+                    groundItems.emplace_back(std::make_unique<Item>(tileMap,font,(*enemy)->getPosition().x,(*enemy)->getPosition().y,rand()%Item::numItems));
                 enemies.erase(enemy);
             }
             enemy=nextEnemy;
@@ -76,8 +78,12 @@ void GameState::update(const float &dt) {
     }
     else {
         if(!miniMapOpen) {
+            mainMenuBTN->update(mousePos);
             inventory.update(*player, mousePos, groundItems);
             health->update(view, player->getHealth());
+            if(mainMenuBTN->isPressed()) {
+                states->pop();
+            }
         }
     }
 }
@@ -96,8 +102,10 @@ void GameState::render(sf::RenderTarget &target) {
         target.draw(background);
         if(miniMapOpen)
             renderMiniMap(target);
-        else
+        else {
             inventory.render(target);
+            mainMenuBTN->render(target);
+        }
     }
 
 #if DEBUG
@@ -126,11 +134,8 @@ void GameState::loadTextures() {
     charactersResources[KNIGHT].addTexture("KNIGHT","../Resources/Knight.png");
     charactersResources[SKELETON].addTexture("SKELETON","../Resources/Skeleton.png");
     charactersResources[SLIME].addTexture("SLIME","../Resources/Slime.png");
-    //TODO put explosion texture inside projectile texture
-    abilityResources[THUNDER].addTexture("PROJECTILE","../Resources/Thunder_projectile.png");
-    abilityResources[THUNDER].addTexture("EXPLOSION","../Resources/Thunder_explosion.png");
-    abilityResources[THUNDER_STORM].addTexture("PROJECTILE","../Resources/Thunderstorm_projectile.png");
-    abilityResources[THUNDER_STORM].addTexture("EXPLOSION","../Resources/Thunder_explosion.png");
+    abilityResources[THUNDER].addTexture("PROJECTILE","../Resources/Thunder.png");
+    abilityResources[THUNDER_STORM].addTexture("PROJECTILE","../Resources/Thunder_2.png");
     charactersResources[KNIGHT].addAnimation(AnimationName::ATTACK, 50, 37, 0, 4, 9, 4, 90);
     charactersResources[KNIGHT].addAnimation(AnimationName::IDLE, 50, 37, 0, 0, 3, 0, 100);
     charactersResources[KNIGHT].addAnimation(AnimationName::MOVE, 50, 37, 0, 1, 5, 1, 100);
@@ -144,9 +149,9 @@ void GameState::loadTextures() {
     charactersResources[SLIME].addAnimation(AnimationName::ATTACK, 32, 25, 0, 0, 4, 0, 200);
     charactersResources[SLIME].addAnimation(AnimationName::DEATH, 32, 25, 0, 1, 3, 1, 150, false);
     abilityResources[THUNDER].addAnimation(AnimationName::MOVE,32,32,0,0,4,0,100);
-    abilityResources[THUNDER].addAnimation(AnimationName::EXPLOSION,32,32,0,0,5,0,100);
+    abilityResources[THUNDER].addAnimation(AnimationName::EXPLOSION,32,32,0,1,5,1,100,false);
     abilityResources[THUNDER_STORM].addAnimation(AnimationName::MOVE,48,48,0,0,15,0,100);
-    abilityResources[THUNDER_STORM].addAnimation(AnimationName::EXPLOSION,32,32,0,0,5,0,100);
+    abilityResources[THUNDER_STORM].addAnimation(AnimationName::EXPLOSION,32,48,0,1,5,1,100, false);
 }
 void GameState::createMiniMap() {
     const std::vector<std::vector<Map::Tile>>& mapLayout=map->getMap();

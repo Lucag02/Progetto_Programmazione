@@ -48,7 +48,9 @@ private:
     std::list<std::unique_ptr<Enemy>>& enemies;
     PlayableCharacter& player;
     std::vector<ResourceManager>& enemyResources;
+    std::list<std::unique_ptr<Projectile>>& playerProjectiles;
     float distanceFromPlayer(float x, float y);
+    bool checkCollision(const Hitbox& hitbox);
 public:
     Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResources, PlayableCharacter &player,
         std::list<std::unique_ptr<Enemy>> &enemies);

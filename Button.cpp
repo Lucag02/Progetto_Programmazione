@@ -56,6 +56,12 @@ const sf::Vector2f &Button::getTextPos() {
     return text.getPosition();
 }
 
+void Button::setPosition(sf::Vector2f pos) {
+    button.setPosition(pos);
+    text.setPosition(button.getPosition().x+(button.getGlobalBounds().width/2)-text.getGlobalBounds().width/2.f,
+                     button.getPosition().y+(button.getGlobalBounds().height/2)-text.getGlobalBounds().height/2.f);
+}
+
 
 
 

@@ -20,6 +20,7 @@ public:
     void setText(const sf::Text &title);
     sf::Text getText();
     void setTextPos(float x, float y);
+    void setPosition(sf::Vector2f pos);
     const sf::Vector2f& getTextPos();
     void update(const sf::Vector2f &mousePos);
     void render(sf::RenderTarget &target);

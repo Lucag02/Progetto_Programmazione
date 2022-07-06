@@ -7,8 +7,9 @@
 #include "Map.h"
 
 Map::Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResources, PlayableCharacter &player,
-         std::list<std::unique_ptr<Enemy>> &enemies) : player(player), enemies(enemies), texture(texture),
-                                                       tileHeight(32), tileWidth(32), sizeX(600), sizeY(200), roomQuantity(30), enemyResources(enemyResources){
+         std::list<std::unique_ptr<Enemy>> &enemies) : player(player),playerProjectiles(player.getProjectiles()),enemies(enemies),
+                                                        texture(texture),tileHeight(32), tileWidth(32), sizeX(600), sizeY(200),
+                                                        roomQuantity(30), enemyResources(enemyResources){
     tiles[TileType::VOID]=sf::IntRect (0*tileWidth,0*tileHeight,tileWidth,tileHeight);
     tiles[TileType::GRASS]=sf::IntRect (0*tileWidth,15*tileHeight,tileWidth,tileHeight);
     tiles[TileType::TERRAIN]=sf::IntRect (0*tileWidth,14*tileHeight,tileWidth,tileHeight);
@@ -17,26 +18,22 @@ Map::Map(const sf::Texture &texture, std::vector<ResourceManager> &enemyResource
 }
 
 void Map::update(const float &dt) {
-    sf::Vector2f pos,size;
-    Hitbox hitbox=player.getHitbox();
-    pos=hitbox.getPosition();
-    pos.x/=tileWidth;
-    pos.y/=tileHeight;
-    size=hitbox.getSize();
-    size.x/=tileWidth;
-    size.y/=tileHeight;
-
-     for(float i=0;i<size.x+1;i++)
-         for(float j=0;j<size.y+1;j++) {
-             if (i > size.x)
-                 i = size.x;
-             if(j>size.y)
-                 j=size.y;
-             if (map[pos.x + i][pos.y + j].type == TileType::WALL)
-                 player.undoMove();
-         }
+    if(checkCollision(player.getHitbox()))
+        player.undoMove();
+    for(auto& projectile:playerProjectiles) {
+        if (checkCollision(projectile->getHitbox()))
+            projectile->explode();
+    }
     Enemy::updateTimer(dt);
     if(Enemy::checkTimer()){
+        sf::Vector2f pos,size;
+        Hitbox hitbox=player.getHitbox();
+        pos=hitbox.getPosition();
+        pos.x/=tileWidth;
+        pos.y/=tileHeight;
+        size=hitbox.getSize();
+        size.x/=tileWidth;
+        size.y/=tileHeight;
         pos.x+=size.x/2;
         pos.y+=size.y/2;
         map[pos.x][pos.y].distance=0;
@@ -92,29 +89,20 @@ void Map::update(const float &dt) {
             }
     }
     for(auto & enemy : enemies){
-         hitbox=enemy->getHitbox();
-         pos=hitbox.getPosition();
-         pos.x/=tileWidth;
-         pos.y/=tileHeight;
-         size=hitbox.getSize();
-         size.x/=tileWidth;
-         size.y/=tileHeight;
-         for(float i=0;i<size.x+1;i++)
-             for(float j=0;j<size.y+1;j++) {
-                 if (i > size.x)
-                     i = size.x;
-                 if(j>size.y)
-                     j=size.y;
-                 if (map[pos.x + i][pos.y + j].type==TileType::WALL||map[pos.x + i][pos.y + j].type==TileType::GRASS) {
-                     enemy->undoMove();
-                 }
-         }
+        Hitbox hitbox=enemy->getHitbox();
+        if(checkCollision(hitbox))
+            enemy->undoMove();
+        sf::Vector2f pos;
+        pos=hitbox.getPosition();
+        pos.x/=tileWidth;
+        pos.y/=tileHeight;
         pos.x+=(hitbox.getSize().x/2)/tileWidth;
         pos.y+=(hitbox.getSize().y/2)/tileHeight;
         if(enemy->isAggroed()&& Enemy::checkTimer())
             enemy->setDirection(getDiredctionToPlayer(pos.x,pos.y));
     }
     Enemy::resetTimer();
+
 }
 
 void Map::render(sf::RenderTarget &target) {
@@ -210,25 +198,7 @@ void Map::placeRooms() {
                             int enemyType=rand() % 2+2;
                             std::unique_ptr<Enemy> enemy=std::make_unique<Enemy>(
                                     enemyResources[enemyType], j * tileWidth,k * tileHeight, enemyType);
-                            Hitbox hitbox=enemy->getHitbox();
-                            sf::Vector2f pos=hitbox.getPosition();
-                            pos.x/=tileWidth;
-                            pos.y/=tileHeight;
-                            sf::Vector2f size=hitbox.getSize();
-                            size.x/=tileWidth;
-                            size.y/=tileHeight;
-                            bool stuck;
-                            for(float l=0;l<size.x+1;l++)
-                                for(float t=0;t<size.y+1;t++) {
-                                    if (l > size.x)
-                                        l = size.x;
-                                    if(t>size.y)
-                                        t=size.y;
-                                    if (map[pos.x + l][pos.y + t].type == TileType::WALL) {
-                                        stuck=true;
-                                    }
-                                }
-                            if(!stuck)
+                            if(!checkCollision(enemy->getHitbox()))
                                 enemies.push_back(std::move(enemy));
                         }
                     }
@@ -353,6 +323,28 @@ int Map::getTileWidth() const {
 
 int Map::getTileHeight() const {
     return tileHeight;
+}
+
+bool Map::checkCollision(const Hitbox &hitbox) {
+    sf::Vector2f pos,size;
+    pos=hitbox.getPosition();
+    pos.x/=tileWidth;
+    pos.y/=tileHeight;
+    size=hitbox.getSize();
+    size.x/=tileWidth;
+    size.y/=tileHeight;
+    for(float i=-1;i<size.x+1;i++)
+        for(float j=-1;j<size.y+1;j++) {
+            if (i > size.x)
+                i = size.x;
+            if(j>size.y)
+                j=size.y;
+            if ((map[pos.x + i][pos.y + j].type==TileType::WALL||map[pos.x + i][pos.y + j].type==TileType::GRASS)&&
+                    map[pos.x+i][pos.y+j].tile.getGlobalBounds().intersects(hitbox.getGlobalBounds())) {
+                return true;
+            }
+        }
+    return false;
 }
 
 Map::Room::Room(int width, int height, int x, int y):
