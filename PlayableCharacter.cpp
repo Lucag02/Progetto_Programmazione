@@ -4,21 +4,31 @@
 #include "PlayableCharacter.h"
 
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, std::vector<ResourceManager> &abilityResources,
-                                     float x, float y,
-                                     int HP, int m, int stamina, float movespeed, float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
+                                     CharacterType type,
+                                     float x, float y, int HP, int m, int stamina, float movespeed, float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina),
-                                                        maxHP(HP),ability(THUNDER),abilityResources(abilityResources){
-    //moveSpeed=1000;
+                                                        maxHP(HP),ability(THUNDER),abilityResources(abilityResources),type(type){
     animation=AnimationName::IDLE;
     lockAnimation=AnimationName::IDLE;
-    scaleFactor=sf::Vector2f (1.4,1.4);
-    sprite=sf::Sprite(resources.getTexture("KNIGHT"));
-    sprite.setTextureRect(sf::IntRect(0,0,50,37));
+    switch(type) {
+        case(KNIGHT):
+            scaleFactor = sf::Vector2f(1.4, 1.4);
+            sprite = sf::Sprite(resources.getTexture("KNIGHT"));
+            sprite.setTextureRect(sf::IntRect(0, 0, 50, 37));
+            hitbox = std::make_unique<Hitbox>(sprite, 20.f, 37.f, false, 10, 15);
+            damageHitbox = std::make_unique<Hitbox>(sprite, 20.f, 40.f, true);
+            break;
+        case(MAGE):
+            scaleFactor = sf::Vector2f(1.2, 1.2);
+            sprite = sf::Sprite(resources.getTexture("MAGE"));
+            sprite.setTextureRect(sf::IntRect(0, 0, 56, 48));
+            hitbox = std::make_unique<Hitbox>(sprite, 20.f, 37.f, false, 10, 7);
+            damageHitbox = std::make_unique<Hitbox>(sprite, 20.f, 40.f, true);
+            break;
+    }
+    sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(scaleFactor);
-    sprite.setOrigin(sprite.getLocalBounds().width/2,sprite.getLocalBounds().height/2);
-    sprite.setPosition(sf::Vector2f(x,y));
-    hitbox= std::make_unique<Hitbox>(sprite,20.f,37.f,false,10,15);
-    damageHitbox=std::make_unique<Hitbox>(sprite,20.f,40.f,true);
+    sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 }
 
 void PlayableCharacter::update(const float &dt, sf::Vector2f mousePos) {

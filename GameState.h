@@ -66,7 +66,7 @@ private:
     float dT;
 #endif
 public:
-    GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow* w);
+    GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow *w, CharacterType playerType=KNIGHT);
     void update(const float& dt) override;
     void render(sf::RenderTarget &target) override;
     ~GameState() override;

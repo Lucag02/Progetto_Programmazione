@@ -30,7 +30,7 @@ void MenuState::update(const float &dt) {
     quitBTN->update(mousePos);
     optionsBTN->update(mousePos);
     if(newGameBTN->isPressed())
-        states->push(std::make_unique<GameState>(states,window));
+        states->push(std::make_unique<CharacterSelectionState>(states,window));
     else if(optionsBTN->isPressed()) {
         states->push(std::make_unique<OptionState>(states,window));
     }

@@ -28,6 +28,4 @@ public:
     void render(sf::RenderTarget& target);
     void setPosition(sf::Vector2f pos);
 };
-
-
 #endif //PROGETTO_PROGRAMMAZIONE_ITEM_H

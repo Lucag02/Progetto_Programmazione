@@ -10,7 +10,7 @@
 #include "Button.h"
 #include "DropDownMenu.h"
 #include "OptionState.h"
-#include "GameState.h"
+#include "CharacterSelectionState.h"
 class MenuState: public States{
 private:
     std::unique_ptr<Button> newGameBTN;

@@ -10,8 +10,8 @@
 enum AbilityType:int {THUNDER=0,THUNDER_STORM};
 class PlayableCharacter: public GameCharacter{
 public:
-    explicit PlayableCharacter(ResourceManager &resources, std::vector<ResourceManager> &abilityResources, float x = 0,
-                               float y = 0, int HP = 300, int m = 0, int stamina = 200, float movespeed = 150,
+    explicit PlayableCharacter(ResourceManager &resources, std::vector<ResourceManager> &abilityResources,CharacterType type=KNIGHT,
+                               float x = 0, float y = 0, int HP = 300, int m = 0, int stamina = 200,float movespeed = 150,
                                float manaregen = 2);
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
@@ -36,6 +36,7 @@ public:
     void equipAbility(AbilityType newAbility);
     ~PlayableCharacter() override;
 private:
+    CharacterType type;
     int maxHP;
     int maxStamina;
     int stamina;

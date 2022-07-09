@@ -4,8 +4,9 @@
 
 #include "GameState.h"
 const float GameState::keyTime=300;
-GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow *w) :view(w->getView()),keyTimer(0),
-        paused(false),miniMapOpen(false),miniMap(sf::VertexArray(sf::Points)){
+GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow *w, CharacterType playerType)
+        : view(w->getView()), keyTimer(0),
+          paused(false), miniMapOpen(false), miniMap(sf::VertexArray(sf::Points)){
     window=w;
     this->states=states;
     for (int i=KNIGHT;i<=SKELETON;i++)
@@ -13,7 +14,7 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
     for(int i=THUNDER;i<=THUNDER_STORM;i++)
         abilityResources.emplace_back();
     loadTextures();
-    player=std::make_unique<PlayableCharacter>(charactersResources[KNIGHT],abilityResources);
+    player=std::make_unique<PlayableCharacter>(charactersResources[playerType],abilityResources,playerType);
     map=std::make_unique<Map>(tileMap,charactersResources,*player,enemies);
     health=std::make_unique<Bar>(5,5,player->getHealth(),sf::Color::Red);
     stamina=std::make_unique<Bar>(5,20,player->getStamina(),sf::Color::Green);
@@ -82,6 +83,8 @@ void GameState::update(const float &dt) {
             inventory.update(*player, mousePos, groundItems);
             health->update(view, player->getHealth());
             if(mainMenuBTN->isPressed()) {
+                auto tmp=std::move(states->top());
+                states->pop();
                 states->pop();
             }
         }
@@ -132,6 +135,7 @@ void GameState::loadTextures() {
     font.loadFromFile("../Config/ComicSans.ttf");
     tileMap.loadFromFile("../Resources/DungeonCrawl_ProjectUtumnoTileset.png");
     charactersResources[KNIGHT].addTexture("KNIGHT","../Resources/Knight.png");
+    charactersResources[MAGE].addTexture("MAGE","../Resources/Battle_mage.png");
     charactersResources[SKELETON].addTexture("SKELETON","../Resources/Skeleton.png");
     charactersResources[SLIME].addTexture("SLIME","../Resources/Slime.png");
     abilityResources[THUNDER].addTexture("PROJECTILE","../Resources/Thunder.png");
@@ -142,6 +146,12 @@ void GameState::loadTextures() {
     charactersResources[KNIGHT].addAnimation(AnimationName::DEATH, 50, 37, 0, 9, 4, 9, 100, false);
     charactersResources[KNIGHT].addAnimation(AnimationName::ROLL, 50, 37, 0, 8, 4, 8, 100);
     charactersResources[KNIGHT].addAnimation(AnimationName::ABILITY, 50, 37, 0, 3, 8, 3, 100);
+    charactersResources[MAGE].addAnimation(AnimationName::ATTACK, 56, 48, 0, 1, 7, 1, 90);
+    charactersResources[MAGE].addAnimation(AnimationName::IDLE, 56, 48, 0, 4, 7, 4, 100);
+    charactersResources[MAGE].addAnimation(AnimationName::MOVE, 56, 48, 0, 5, 9, 5, 100);
+    charactersResources[MAGE].addAnimation(AnimationName::DEATH, 56, 48, 0, 3, 11, 3, 100, false);
+    charactersResources[MAGE].addAnimation(AnimationName::ROLL, 56, 48, 0, 2, 6, 2, 100);
+    charactersResources[MAGE].addAnimation(AnimationName::ABILITY, 56, 48, 0, 0, 9, 0, 100);
     charactersResources[SKELETON].addAnimation(AnimationName::MOVE, 50, 48, 0, 2, 5, 2, 150);
     charactersResources[SKELETON].addAnimation(AnimationName::ATTACK, 50, 48, 0, 1, 5, 1, 200);
     charactersResources[SKELETON].addAnimation(AnimationName::DEATH, 50, 48, 0, 3, 5, 3, 150, false);
