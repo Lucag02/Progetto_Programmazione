@@ -135,6 +135,7 @@ bool PlayableCharacter::isAnimationPlaying() {
 
 void PlayableCharacter::setPosition(float x, float y) {
     sprite.setPosition(x,y);
+    hitbox->setPosition(x - hitbox->getOffsetX(), y - hitbox->getOffsetY());
 }
 
 sf::Vector2f PlayableCharacter::getPosition() {

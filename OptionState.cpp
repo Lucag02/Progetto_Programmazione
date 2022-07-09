@@ -10,7 +10,6 @@ OptionState::OptionState(std::stack<std::unique_ptr<States>> *states, sf::Render
     this->states=states;
     background.setSize(sf::Vector2f(800.f,450.f));
     if(!backgroundTexture.loadFromFile("../Resources/background.jpeg"))
-        //TODO handle exceptions
         std::cout<<"couldn't load background.jpeg"<<"\n";
     background.setTexture(&backgroundTexture);
     if(!font.loadFromFile("../Config/ComicSans.ttf"))
@@ -45,7 +44,6 @@ OptionState::OptionState(std::stack<std::unique_ptr<States>> *states, sf::Render
 }
 
 void OptionState::update(const float &dt) {
-    //FIXME resolutionDDM not working properly
     sf::View view=window->getView();
     view.setCenter(view.getSize().x/2,view.getSize().y/2);
     window->setView(view);
@@ -54,7 +52,6 @@ void OptionState::update(const float &dt) {
     back->update(mousePos);
     resolutionDDM->update(mousePos,dt);
     vsyncCB.update(mousePos, dt);
-    //FIXME vsync makes the game stutter
     if(apply->isPressed()){
         goToLine(file, 4);
         if(vsyncCB.isChecked()) {
@@ -67,7 +64,7 @@ void OptionState::update(const float &dt) {
         }
         goToLine(file,2);
         std::string tmp=resolutionDDM->getActiveString();
-        tmp.resize(11,' ');
+        tmp.resize(12,' ');
         file<<tmp.replace(tmp.find(" x"),3," ");
         window->setSize(sf::Vector2u(std::stoi(tmp.substr(0,4)),std::stoi(tmp.substr(4,tmp.size()-4))));
     }

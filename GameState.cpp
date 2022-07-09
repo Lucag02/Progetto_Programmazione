@@ -5,7 +5,7 @@
 #include "GameState.h"
 const float GameState::keyTime=300;
 GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow *w) :view(w->getView()),keyTimer(0),
-        paused(false),miniMapOpen(false){
+        paused(false),miniMapOpen(false),miniMap(sf::VertexArray(sf::Points)){
     window=w;
     this->states=states;
     for (int i=KNIGHT;i<=SKELETON;i++)
@@ -156,23 +156,21 @@ void GameState::loadTextures() {
 void GameState::createMiniMap() {
     const std::vector<std::vector<Map::Tile>>& mapLayout=map->getMap();
     sf::Vector2i size=map->getMapSize();
-    miniMap.resize(size.x);
+    miniMap.resize(size.x*size.y);
     for(int i=size.x-1;i>=0;i--) {
-        miniMap[i].resize(size.y);
         for (int j = size.y-1; j >=0; j--) {
-            miniMap[i][j].setSize(sf::Vector2f(1, 1));
             switch(mapLayout[i][j].type) {
                 case Map::TileType::TERRAIN:
-                    miniMap[i][j].setFillColor(sf::Color(140,107,83));
+                    miniMap[i*size.y+j].color=sf::Color(140,107,83);
                     break;
                 case Map::TileType::GRASS:
-                    miniMap[i][j].setFillColor(sf::Color(0,102,0));
+                    miniMap[i*size.y+j].color=sf::Color(0,100,0);
                     break;
                 case Map::TileType::WALL:
-                    miniMap[i][j].setFillColor(sf::Color(170,170,10));
+                    miniMap[i*size.y+j].color=sf::Color(170,170,10);
                     break;
                 case Map::TileType::VOID:
-                    miniMap[i][j].setFillColor(sf::Color::Black);
+                    miniMap[i*size.y+j].color=sf::Color::Black;
                     break;
             }
         }
@@ -180,26 +178,21 @@ void GameState::createMiniMap() {
 }
 
 void GameState::updateMiniMap() {
-    int sizeX=miniMap.size();
-    int sizeY=miniMap[0].size();
-    sf::Vector2f topLeft(view.getCenter().x-sizeX/2,view.getCenter().y-sizeY/2);
-    for(int i=0;i<sizeX;i++)
-        for(int j=0;j<sizeY;j++)
-            miniMap[i][j].setPosition(topLeft.x+i,topLeft.y+j);
+    sf::Vector2i size=map->getMapSize();
+    sf::Vector2f topLeft(view.getCenter().x-size.x/2,view.getCenter().y-size.y/2);
+    for(int i=0;i<size.x;i++)
+        for(int j=0;j<size.y;j++)
+            miniMap[i*size.y+j].position=(sf::Vector2f (topLeft.x+i,topLeft.y+j));
 }
 
 void GameState::renderMiniMap(sf::RenderTarget &target) {
-    int sizeX=miniMap.size();
-    int sizeY=miniMap[0].size();
-    for(int i=0;i<sizeX;i++)
-        for(int j=0;j<sizeY;j++) {
-            target.draw(miniMap[i][j]);
-        }
+    target.draw(miniMap);
+    sf::Vector2i size=map->getMapSize();
     sf::RectangleShape playerMarker;
     playerMarker.setSize(sf::Vector2f(5,5));
     playerMarker.setFillColor(sf::Color::Red);
-    playerMarker.setPosition(view.getCenter().x-sizeX/2+player->getPosition().x/map->getTileWidth(),
-                             view.getCenter().y-sizeY/2+player->getPosition().y/map->getTileHeight());
+    playerMarker.setPosition(view.getCenter().x-size.x/2+player->getPosition().x/map->getTileWidth(),
+                             view.getCenter().y-size.y/2+player->getPosition().y/map->getTileHeight());
     target.draw(playerMarker);
 }
 

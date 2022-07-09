@@ -50,8 +50,8 @@ private:
     sf::Texture tileMap;
     std::unique_ptr<Bar> health;
     std::unique_ptr<Bar> stamina;
-    //TODO put the miniMap in a vertx array to improve performance
-    std::vector<std::vector<sf::RectangleShape>> miniMap;
+    //FXME use quads instead of points
+    sf::VertexArray miniMap;
     std::list<std::unique_ptr<Item>> groundItems;
     sf::Font font;
     bool paused;

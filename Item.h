@@ -19,6 +19,7 @@ private:
     bool showText;
     void use(PlayableCharacter& player);
     const static int maxItems;
+
 public:
     static const int numItems=3;
     Item(const sf::Texture &texture, const sf::Font &font, float x = 0, float y = 0, int type = 0);

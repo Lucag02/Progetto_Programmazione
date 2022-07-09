@@ -49,6 +49,7 @@ private:
     PlayableCharacter& player;
     std::vector<ResourceManager>& enemyResources;
     std::list<std::unique_ptr<Projectile>>& playerProjectiles;
+    void updateDistanceValues();
     float distanceFromPlayer(float x, float y);
     bool checkCollision(const Hitbox& hitbox);
 public:

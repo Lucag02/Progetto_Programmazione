@@ -26,67 +26,7 @@ void Map::update(const float &dt) {
     }
     Enemy::updateTimer(dt);
     if(Enemy::checkTimer()){
-        sf::Vector2f pos,size;
-        Hitbox hitbox=player.getHitbox();
-        pos=hitbox.getPosition();
-        pos.x/=tileWidth;
-        pos.y/=tileHeight;
-        size=hitbox.getSize();
-        size.x/=tileWidth;
-        size.y/=tileHeight;
-        pos.x+=size.x/2;
-        pos.y+=size.y/2;
-        map[pos.x][pos.y].distance=0;
-        map[pos.x+1][pos.y].distance=1;
-        map[pos.x][pos.y+1].distance=1;
-        map[pos.x-1][pos.y].distance=1;
-        map[pos.x][pos.y-1].distance=1;
-        int searchX=25;
-        if(pos.x+searchX>sizeX)
-            searchX=sizeX-pos.x;
-        int searchY=25;
-        if(pos.y+searchY>sizeY)
-            searchY=sizeY-pos.y;
-        for(int i=0;i<searchX;i++)
-            for(int j=0;j<searchY;j++) {
-                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
-                    map[pos.x+i][pos.y+j].distance=-1;
-                else
-                    if(i!=0||j!=0)
-                        map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
-
-            }
-        if(pos.x-searchX<0)
-            searchX=pos.x;
-        for(int i=0;i>-searchX;i--)
-            for(int j=0;j<searchY;j++) {
-                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
-                    map[pos.x+i][pos.y+j].distance=-1;
-                else
-                if(i!=0||j!=0)
-                    map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
-
-            }
-        if(pos.y-searchY<0)
-            searchY=pos.y;
-        for(int i=0;i<searchX;i++)
-            for(int j=0;j>-searchY;j--) {
-                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
-                    map[pos.x+i][pos.y+j].distance=-1;
-                else
-                if(i!=0||j!=0)
-                    map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
-
-            }
-        for(int i=0;i>-searchX;i--)
-            for(int j=0;j>-searchY;j--) {
-                if(map[pos.x+i][pos.y+j].type==TileType::WALL)
-                    map[pos.x+i][pos.y+j].distance=-1;
-                else
-                if(i!=0||j!=0)
-                    map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
-
-            }
+        updateDistanceValues();
     }
     for(auto & enemy : enemies){
         Hitbox hitbox=enemy->getHitbox();
@@ -169,11 +109,11 @@ void Map::placeRooms() {
     srand((unsigned int)time(nullptr));
     int roomMinSize=12;
     int roomRandSize=10;
-    int horizontalBorder=50;
-    int verticalBorder=50;
+    int horizontalBorder=30;
+    int verticalBorder=30;
     for(int i=0,maxLoops=0;i<roomQuantity&&maxLoops<1000;++i,++maxLoops){
-        int x=rand()%(sizeX - (roomMinSize+roomRandSize) - horizontalBorder) + horizontalBorder;
-        int y=rand()%(sizeY-(roomMinSize+roomRandSize)-verticalBorder)+verticalBorder;
+        int x=rand()%(sizeX - (roomMinSize+roomRandSize) - 2*horizontalBorder) + horizontalBorder;
+        int y=rand()%(sizeY-(roomMinSize+roomRandSize)-2*verticalBorder)+verticalBorder;
         int w=roomMinSize+rand()%(roomRandSize+1);
         int h=roomMinSize+rand()%(roomRandSize+1);
         Room room(w,h,x,y);
@@ -300,8 +240,7 @@ sf::Vector2i Map::getDiredctionToPlayer(float x, float y) {
                 i=2;
                 j=2;
             }
-            if (map[x + i][y + j].distance >= 0 && map[x + i][y + j].distance < min && (i != 0 || j != 0)) {
-
+            else if (map[x + i][y + j].distance >= 0 && map[x + i][y + j].distance < min && (i != 0 || j != 0)) {
                 min = map[x + i][y + j].distance;
                 direction = sf::Vector2i(i, j);
             }
@@ -339,12 +278,76 @@ bool Map::checkCollision(const Hitbox &hitbox) {
                 i = size.x;
             if(j>size.y)
                 j=size.y;
-            if ((map[pos.x + i][pos.y + j].type==TileType::WALL||map[pos.x + i][pos.y + j].type==TileType::GRASS)&&
-                    map[pos.x+i][pos.y+j].tile.getGlobalBounds().intersects(hitbox.getGlobalBounds())) {
+            if ((map[pos.x + i][pos.y + j].type==TileType::WALL)&&map[pos.x+i][pos.y+j].tile.getGlobalBounds().intersects(
+                    hitbox.getGlobalBounds())) {
                 return true;
             }
         }
     return false;
+}
+
+void Map::updateDistanceValues() {
+    sf::Vector2f pos,size;
+    Hitbox hitbox=player.getHitbox();
+    pos=hitbox.getPosition();
+    pos.x/=tileWidth;
+    pos.y/=tileHeight;
+    size=hitbox.getSize();
+    size.x/=tileWidth;
+    size.y/=tileHeight;
+    pos.x+=size.x/2;
+    pos.y+=size.y/2;
+    map[pos.x][pos.y].distance=0;
+    map[pos.x+1][pos.y].distance=1;
+    map[pos.x][pos.y+1].distance=1;
+    map[pos.x-1][pos.y].distance=1;
+    map[pos.x][pos.y-1].distance=1;
+    int searchX=25;
+    if(pos.x+searchX>sizeX)
+        searchX=sizeX-pos.x;
+    int searchY=25;
+    if(pos.y+searchY>sizeY)
+        searchY=sizeY-pos.y;
+    for(int i=0;i<searchX;i++)
+        for(int j=0;j<searchY;j++) {
+            if(map[pos.x+i][pos.y+j].type==TileType::WALL)
+                map[pos.x+i][pos.y+j].distance=-1;
+            else
+            if(i!=0||j!=0)
+                map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
+
+        }
+    if(pos.x-searchX<0)
+        searchX=pos.x;
+    for(int i=0;i>-searchX;i--)
+        for(int j=0;j<searchY;j++) {
+            if(map[pos.x+i][pos.y+j].type==TileType::WALL)
+                map[pos.x+i][pos.y+j].distance=-1;
+            else
+            if(i!=0||j!=0)
+                map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
+
+        }
+    if(pos.y-searchY<0)
+        searchY=pos.y;
+    for(int i=0;i<searchX;i++)
+        for(int j=0;j>-searchY;j--) {
+            if(map[pos.x+i][pos.y+j].type==TileType::WALL)
+                map[pos.x+i][pos.y+j].distance=-1;
+            else
+            if(i!=0||j!=0)
+                map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
+
+        }
+    for(int i=0;i>-searchX;i--)
+        for(int j=0;j>-searchY;j--) {
+            if(map[pos.x+i][pos.y+j].type==TileType::WALL)
+                map[pos.x+i][pos.y+j].distance=-1;
+            else
+            if(i!=0||j!=0)
+                map[pos.x+i][pos.y+j].distance= distanceFromPlayer(pos.x+i,pos.y+j);
+
+        }
 }
 
 Map::Room::Room(int width, int height, int x, int y):
