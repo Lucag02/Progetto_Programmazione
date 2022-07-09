@@ -15,6 +15,8 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, std::vector<Res
             scaleFactor = sf::Vector2f(1.4, 1.4);
             sprite = sf::Sprite(resources.getTexture("KNIGHT"));
             sprite.setTextureRect(sf::IntRect(0, 0, 50, 37));
+            sprite.setScale(scaleFactor);
+            sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
             hitbox = std::make_unique<Hitbox>(sprite, 20.f, 37.f, false, 10, 15);
             damageHitbox = std::make_unique<Hitbox>(sprite, 20.f, 40.f, true);
             break;
@@ -22,13 +24,13 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, std::vector<Res
             scaleFactor = sf::Vector2f(1.2, 1.2);
             sprite = sf::Sprite(resources.getTexture("MAGE"));
             sprite.setTextureRect(sf::IntRect(0, 0, 56, 48));
-            hitbox = std::make_unique<Hitbox>(sprite, 20.f, 37.f, false, 10, 7);
+            sprite.setScale(scaleFactor);
+            sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2+8);
+            hitbox = std::make_unique<Hitbox>(sprite, 20.f, 37.f, false, 10, 17);
             damageHitbox = std::make_unique<Hitbox>(sprite, 20.f, 40.f, true);
             break;
     }
     sprite.setPosition(sf::Vector2f(x, y));
-    sprite.setScale(scaleFactor);
-    sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 }
 
 void PlayableCharacter::update(const float &dt, sf::Vector2f mousePos) {

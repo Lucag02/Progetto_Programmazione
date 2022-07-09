@@ -6,7 +6,7 @@
 const float GameState::keyTime=300;
 GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWindow *w, CharacterType playerType)
         : view(w->getView()), keyTimer(0),
-          paused(false), miniMapOpen(false), miniMap(sf::VertexArray(sf::Points)){
+          paused(false), miniMapOpen(false), miniMap(sf::VertexArray(sf::Quads)){
     window=w;
     this->states=states;
     for (int i=KNIGHT;i<=SKELETON;i++)
@@ -153,8 +153,8 @@ void GameState::loadTextures() {
     charactersResources[MAGE].addAnimation(AnimationName::ROLL, 56, 48, 0, 2, 6, 2, 100);
     charactersResources[MAGE].addAnimation(AnimationName::ABILITY, 56, 48, 0, 0, 9, 0, 100);
     charactersResources[SKELETON].addAnimation(AnimationName::MOVE, 50, 48, 0, 2, 5, 2, 150);
-    charactersResources[SKELETON].addAnimation(AnimationName::ATTACK, 50, 48, 0, 1, 5, 1, 200);
-    charactersResources[SKELETON].addAnimation(AnimationName::DEATH, 50, 48, 0, 3, 5, 3, 150, false);
+    charactersResources[SKELETON].addAnimation(AnimationName::ATTACK, 53, 48, 0, 1, 5, 1, 200);
+    charactersResources[SKELETON].addAnimation(AnimationName::DEATH, 50, 48, 0, 0, 5, 0, 150, false);
     charactersResources[SLIME].addAnimation(AnimationName::MOVE, 32, 25, 0, 4, 3, 4, 150);
     charactersResources[SLIME].addAnimation(AnimationName::ATTACK, 32, 25, 0, 0, 4, 0, 200);
     charactersResources[SLIME].addAnimation(AnimationName::DEATH, 32, 25, 0, 1, 3, 1, 150, false);
@@ -166,21 +166,34 @@ void GameState::loadTextures() {
 void GameState::createMiniMap() {
     const std::vector<std::vector<Map::Tile>>& mapLayout=map->getMap();
     sf::Vector2i size=map->getMapSize();
-    miniMap.resize(size.x*size.y);
+    miniMap.resize(size.x*size.y*4);
     for(int i=size.x-1;i>=0;i--) {
         for (int j = size.y-1; j >=0; j--) {
+            sf::Vertex* quad=&miniMap[(i*size.y+j)*4];
             switch(mapLayout[i][j].type) {
                 case Map::TileType::TERRAIN:
-                    miniMap[i*size.y+j].color=sf::Color(140,107,83);
+                    quad[0].color=sf::Color(140,107,83);
+                    quad[1].color=sf::Color(140,107,83);
+                    quad[2].color=sf::Color(140,107,83);
+                    quad[3].color=sf::Color(140,107,83);
                     break;
                 case Map::TileType::GRASS:
-                    miniMap[i*size.y+j].color=sf::Color(0,100,0);
+                    quad[0].color=sf::Color(0,100,0);
+                    quad[1].color=sf::Color(0,100,0);
+                    quad[2].color=sf::Color(0,100,0);
+                    quad[3].color=sf::Color(0,100,0);
                     break;
                 case Map::TileType::WALL:
-                    miniMap[i*size.y+j].color=sf::Color(170,170,10);
+                    quad[0].color=sf::Color(170,170,10);
+                    quad[1].color=sf::Color(170,170,10);
+                    quad[2].color=sf::Color(170,170,10);
+                    quad[3].color=sf::Color(170,170,10);
                     break;
                 case Map::TileType::VOID:
-                    miniMap[i*size.y+j].color=sf::Color::Black;
+                    quad[0].color=sf::Color::Black;
+                    quad[1].color=sf::Color::Black;
+                    quad[2].color=sf::Color::Black;
+                    quad[3].color=sf::Color::Black;
                     break;
             }
         }
@@ -191,8 +204,13 @@ void GameState::updateMiniMap() {
     sf::Vector2i size=map->getMapSize();
     sf::Vector2f topLeft(view.getCenter().x-size.x/2,view.getCenter().y-size.y/2);
     for(int i=0;i<size.x;i++)
-        for(int j=0;j<size.y;j++)
-            miniMap[i*size.y+j].position=(sf::Vector2f (topLeft.x+i,topLeft.y+j));
+        for(int j=0;j<size.y;j++) {
+            sf::Vertex* quad=&miniMap[(j+i*size.y)*4];
+            quad[0].position = (sf::Vector2f(topLeft.x + i, topLeft.y + j));
+            quad[1].position = (sf::Vector2f(topLeft.x + i+1, topLeft.y + j));
+            quad[2].position = (sf::Vector2f(topLeft.x + i+1, topLeft.y + j+1));
+            quad[3].position = (sf::Vector2f(topLeft.x + i, topLeft.y + j+1));
+        }
 }
 
 void GameState::renderMiniMap(sf::RenderTarget &target) {
