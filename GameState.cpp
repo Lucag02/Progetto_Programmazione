@@ -18,6 +18,7 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
     map=std::make_unique<Map>(tileMap,charactersResources,*player,enemies);
     health=std::make_unique<Bar>(5,5,player->getHealth(),sf::Color::Red);
     stamina=std::make_unique<Bar>(5,20,player->getStamina(),sf::Color::Green);
+    mana=std::make_unique<Bar>(5,35,player->getMana(),sf::Color::Blue);
     createMiniMap();
     background.setSize(view.getSize());
     background.setFillColor(sf::Color(0,0,0,100));
@@ -76,6 +77,7 @@ void GameState::update(const float &dt) {
         window->setView(view);
         health->update(view, player->getHealth());
         stamina->update(view, player->getStamina());
+        mana->update(view,player->getMana());
     }
     else {
         if(!miniMapOpen) {
@@ -101,6 +103,7 @@ void GameState::render(sf::RenderTarget &target) {
     player->render(target);
     health->render(target);
     stamina->render(target);
+    mana->render(target);
     if(paused) {
         target.draw(background);
         if(miniMapOpen)
@@ -283,8 +286,13 @@ void GameState::Inventory::render(sf::RenderTarget &target) {
     target.draw(background);
     for(const auto& container:containers)
         target.draw(container);
-    for(auto& item:items)
-        item->render(target);
+    auto item=items.end();
+    item--;
+    while(item!=items.begin()) {
+        (*item)->render(target);
+        item--;
+    }
+    (*item)->render(target);
 }
 
 std::list<std::unique_ptr<Item>> &GameState::Inventory::getItems() {

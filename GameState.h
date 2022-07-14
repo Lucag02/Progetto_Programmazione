@@ -50,6 +50,7 @@ private:
     sf::Texture tileMap;
     std::unique_ptr<Bar> health;
     std::unique_ptr<Bar> stamina;
+    std::unique_ptr<Bar> mana;
     //FXME use quads instead of points
     sf::VertexArray miniMap;
     std::list<std::unique_ptr<Item>> groundItems;

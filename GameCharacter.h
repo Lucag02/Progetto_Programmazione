@@ -13,14 +13,14 @@
 #include "Hitbox.h"
 #include "Projectile.h"
 #define DEBUG 0
-enum CharacterType:int {KNIGHT=0,MAGE=1,SLIME=2,SKELETON=3};
+enum CharacterType: int {KNIGHT=0,MAGE=1,SLIME=2,SKELETON=3};
 class GameCharacter {
 protected:
     std::unique_ptr<Hitbox> hitbox;
     sf::Sprite sprite;
     float moveSpeed;
     int hp;
-    int mana;
+    float mana;
     float manaRegen;
     ResourceManager resources;
     sf::Vector2f prevPos;
