@@ -78,6 +78,11 @@ void GameState::update(const float &dt) {
         health->update(view, player->getHealth());
         stamina->update(view, player->getStamina());
         mana->update(view,player->getMana());
+        if(player->getAnimation()==AnimationName::DEATH&&!player->isAnimationPlaying()){
+            auto tmp=std::move(states->top());
+            states->pop();
+            states->pop();
+        }
     }
     else {
         if(!miniMapOpen) {
@@ -286,13 +291,15 @@ void GameState::Inventory::render(sf::RenderTarget &target) {
     target.draw(background);
     for(const auto& container:containers)
         target.draw(container);
-    auto item=items.end();
-    item--;
-    while(item!=items.begin()) {
-        (*item)->render(target);
+    if(!items.empty()) {
+        auto item = items.end();
         item--;
+        while (item != items.begin()) {
+            (*item)->render(target);
+            item--;
+        }
+        (*item)->render(target);
     }
-    (*item)->render(target);
 }
 
 std::list<std::unique_ptr<Item>> &GameState::Inventory::getItems() {

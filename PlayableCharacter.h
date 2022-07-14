@@ -33,6 +33,7 @@ public:
     std::vector<ResourceManager>& abilityResources;
     std::list<std::unique_ptr<Projectile>> projectiles;
     std::list<std::unique_ptr<Projectile>>& getProjectiles();
+    AnimationName getAnimation();
     void increaseSpeed(float speedIncrease);
     void equipAbility(AbilityType newAbility);
     ~PlayableCharacter() override;

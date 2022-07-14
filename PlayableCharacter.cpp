@@ -6,8 +6,8 @@
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, std::vector<ResourceManager> &abilityResources,
                                      CharacterType type,
                                      float x, float y, int HP, int m, int stamina, float movespeed, float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
-                                                        animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina),
-                                                        maxHP(HP),ability(THUNDER),abilityResources(abilityResources),type(type){
+                                                        animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina),dead(false),
+                                                        maxHP(HP),ability(THUNDER),abilityResources(abilityResources),type(type),maxMana(m){
     animation=AnimationName::IDLE;
     lockAnimation=AnimationName::IDLE;
     switch(type) {
@@ -36,76 +36,89 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, std::vector<Res
 void PlayableCharacter::update(const float &dt, sf::Vector2f mousePos) {
     sf::Vector2f move=sf::Vector2f(0,0);
     animation=AnimationName::IDLE;
-    stamina++;
+    stamina+=dt*100;
+    mana+=manaRegen*dt*100;
+    if(hp<0) {
+        dead = true;
+        animation = AnimationName::DEATH;
+    }
+    if(mana>maxMana)
+        mana=maxMana;
     if(stamina>maxStamina)
         stamina=maxStamina;
-    if(!hardLock) {
-        if (!animationLock&&sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            lockAnimation = AnimationName::ATTACK;
-            animationLock = true;
-            hardLock=true;
-        } else {
-            if (!animationLock && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-                if(mousePos.x-sprite.getPosition().x>0)
-                    sprite.setScale(scaleFactor.x, scaleFactor.y);
-                else
-                    sprite.setScale(-scaleFactor.x, scaleFactor.y);
-                lockAnimation = AnimationName::ABILITY;
+    if(!dead) {
+        if (!hardLock) {
+            if (!animationLock && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                lockAnimation = AnimationName::ATTACK;
                 animationLock = true;
-                hardLock=true;
-            }
-            else {
-                prevPos = sprite.getPosition();
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-                    move.x -= 1;
-                    animation = AnimationName::MOVE;
-                    sprite.setScale(-scaleFactor.x, scaleFactor.y);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-                    move.y += 1;
-                    animation = AnimationName::MOVE;
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-                    move.x += 1;
-                    animation = AnimationName::MOVE;
-                    sprite.setScale(scaleFactor);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-                    move.y -= 1;
-                    animation = AnimationName::MOVE;
-                }
-                if (!animationLock && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && stamina > 40&&(move.x!=0||move.y!=0)) {
-                    lockAnimation = AnimationName::ROLL;
+                hardLock = true;
+            } else {
+                if (!animationLock && sf::Mouse::isButtonPressed(sf::Mouse::Right) && mana >= 70) {
+                    if (mousePos.x - sprite.getPosition().x > 0)
+                        sprite.setScale(scaleFactor.x, scaleFactor.y);
+                    else
+                        sprite.setScale(-scaleFactor.x, scaleFactor.y);
+                    lockAnimation = AnimationName::ABILITY;
                     animationLock = true;
+                    hardLock = true;
+                } else {
+                    prevPos = sprite.getPosition();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+                        move.x -= 1;
+                        animation = AnimationName::MOVE;
+                        sprite.setScale(-scaleFactor.x, scaleFactor.y);
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+                        move.y += 1;
+                        animation = AnimationName::MOVE;
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+                        move.x += 1;
+                        animation = AnimationName::MOVE;
+                        sprite.setScale(scaleFactor);
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+                        move.y -= 1;
+                        animation = AnimationName::MOVE;
+                    }
+                    if (!animationLock && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && stamina > 40 &&
+                        (move.x != 0 || move.y != 0)) {
+                        lockAnimation = AnimationName::ROLL;
+                        animationLock = true;
+                    }
                 }
             }
         }
+        if (animationLock)
+            animation = lockAnimation;
+        if (animation == AnimationName::ROLL) {
+            move.x *= 1.6;
+            move.y *= 1.6;
+            stamina -= 2;
+            if (stamina < 0)
+                stamina = 0;
+        }
+        sprite.move(move * dt * moveSpeed);
+        hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(),
+                            sprite.getPosition().y - hitbox->getOffsetY());
+        if (animation == AnimationName::ATTACK && resources.getAnimation(animation).getAnimationFrame() > 2 &&
+            resources.getAnimation(animation).getAnimationFrame() < 6) {
+            damageActive = true;
+            if (sprite.getScale().x > 0)
+                damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);
+            else
+                damageHitbox->setPosition(hitbox->getPosition().x - damageHitbox->getSize().x, hitbox->getPosition().y);
+        } else
+            damageActive = false;
+        resources.playAnimation(animation, dt, sprite);
+        if (animation == AnimationName::ABILITY && !resources.getAnimation(animation).isPlaying()) {
+            projectiles.emplace_back(std::make_unique<Projectile>(abilityResources[ability], mousePos,
+                                                                  sprite.getPosition().x, sprite.getPosition().y));
+            mana -= 70;
+        }
     }
-    if(animationLock)
-        animation=lockAnimation;
-    if(animation==AnimationName::ROLL) {
-        move.x *= 1.6;
-        move.y *= 1.6;
-        stamina-=2;
-        if(stamina<0)
-            stamina=0;
-    }
-    sprite.move(move*dt*moveSpeed);
-    hitbox->setPosition(sprite.getPosition().x - hitbox->getOffsetX(), sprite.getPosition().y - hitbox->getOffsetY());
-    if(animation==AnimationName::ATTACK&&resources.getAnimation(animation).getAnimationFrame()>2&&
-            resources.getAnimation(animation).getAnimationFrame()<6) {
-        damageActive = true;
-        if(sprite.getScale().x>0)
-            damageHitbox->setPosition(hitbox->getPosition().x + hitbox->getSize().x, hitbox->getPosition().y);
-        else
-            damageHitbox->setPosition(hitbox->getPosition().x - damageHitbox->getSize().x, hitbox->getPosition().y);
-    }
-    else
-        damageActive=false;
-    resources.playAnimation(animation,dt,sprite);
-    if(animation==AnimationName::ABILITY && !resources.getAnimation(animation).isPlaying())
-        projectiles.emplace_back(std::make_unique<Projectile>(abilityResources[ability],mousePos,
-                                                              sprite.getPosition().x,sprite.getPosition().y));
+    else if(resources.getAnimation(AnimationName::DEATH).isPlaying())
+        resources.playAnimation(animation,dt,sprite);
     auto projectile=projectiles.begin();
     while(projectile!=projectiles.end()) {
         (*projectile)->update(dt);
@@ -203,5 +216,13 @@ PlayableCharacter::~PlayableCharacter() {
 
 void PlayableCharacter::equipAbility(AbilityType newAbility) {
     ability=newAbility;
+}
+
+float PlayableCharacter::getMana() {
+    return mana;
+}
+
+AnimationName PlayableCharacter::getAnimation() {
+    return animation;
 }
 
