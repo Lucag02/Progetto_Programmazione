@@ -13,20 +13,7 @@
 #include "Button.h"
 class GameState: public States {
 private:
-    class Inventory{
-    private:
-        int size;
-        sf::RectangleShape background;
-        std::vector<sf::RectangleShape> containers;
-        std::list<std::unique_ptr<Item>> items;
-    public:
-        Inventory();
-        void updatePosition(sf::Vector2f viewPos);
-        void update(PlayableCharacter &player, sf::Vector2f mousePos,
-                    std::list<std::unique_ptr<Item>> &groundItems);
-        void render(sf::RenderTarget& target);
-        std::list<std::unique_ptr<Item>>& getItems();
-    };
+
     class Bar{
     private:
         sf::Vector2f offset;
@@ -38,7 +25,6 @@ private:
         void update(const sf::View &currentView, float width);
         void render(sf::RenderTarget& target);
     };
-    Inventory inventory;
     sf::RectangleShape background;
     sf::View view;
     std::unique_ptr<PlayableCharacter> player;

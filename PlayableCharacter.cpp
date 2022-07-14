@@ -5,9 +5,11 @@
 
 PlayableCharacter::PlayableCharacter(ResourceManager &resources, std::vector<ResourceManager> &abilityResources,
                                      CharacterType type,
-                                     float x, float y, int HP, int m, int stamina, float movespeed, float manaregen) : GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
+                                     float x, float y, int HP, int m, int stamina, float movespeed, float manaregen) :
+                                                        GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina),dead(false),
-                                                        maxHP(HP),ability(THUNDER),abilityResources(abilityResources),type(type),maxMana(m){
+                                                        maxHP(HP),ability(THUNDER),abilityResources(abilityResources),type(type),maxMana(m),
+                                                        inventory(std::make_unique<Inventory>()){
     animation=AnimationName::IDLE;
     lockAnimation=AnimationName::IDLE;
     switch(type) {
@@ -210,8 +212,8 @@ std::list<std::unique_ptr<Projectile>>& PlayableCharacter::getProjectiles() {
     return projectiles;
 }
 
-PlayableCharacter::~PlayableCharacter() {
-
+Hitbox &PlayableCharacter::getHitbox() {
+    return GameCharacter::getHitbox();
 }
 
 void PlayableCharacter::equipAbility(AbilityType newAbility) {
@@ -224,5 +226,13 @@ float PlayableCharacter::getMana() {
 
 AnimationName PlayableCharacter::getAnimation() {
     return animation;
+}
+
+Inventory &PlayableCharacter::getInventory() {
+    return *inventory;
+}
+
+PlayableCharacter::~PlayableCharacter() {
+
 }
 

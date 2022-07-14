@@ -31,7 +31,7 @@ protected:
 public:
     explicit GameCharacter(ResourceManager &resources, float x = 0, float y = 0, int HP = 10, int m = 0,float movespeed = 100,
                            float manaregen = 2);
-    Hitbox & getHitbox();
+    virtual Hitbox & getHitbox();
     void undoMove();
     virtual void render(sf::RenderTarget &target)=0;
     virtual ~GameCharacter()=default;

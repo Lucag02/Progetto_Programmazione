@@ -36,7 +36,7 @@ void GameState::update(const float &dt) {
         sf::Vector2f viewPos=sf::Vector2f(view.getCenter().x - view.getSize().x / 2, view.getCenter().y - view.getSize().y / 2);
         background.setPosition(viewPos);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            inventory.updatePosition(viewPos);
+            player->getInventory().updatePosition(viewPos);
             mainMenuBTN->setPosition(sf::Vector2f(viewPos.x+10,viewPos.y+390));
             keyTimer=0;
             paused = !paused;
@@ -68,9 +68,16 @@ void GameState::update(const float &dt) {
         }
         auto item=groundItems.begin();
         while(item!=groundItems.end()){
-            auto nextItem=++item;
-            (*(--item))->update(*player, mousePos, groundItems, inventory.getItems());
-            item=nextItem;;
+            (*item)->update(*player,mousePos);
+            if(!(*item)->isOnGround()&& player->getInventory().getMaxSize()>player->getInventory().getCurrentSize()) {
+                (*item)->setScale(sf::Vector2f(2,2));
+                auto tmp=item;
+                item++;
+                player->getInventory().add(std::move(*tmp));
+                groundItems.erase(tmp);
+            }
+            else
+                item++;
         }
         map->update(dt);
         view.setCenter(player->getPosition());
@@ -87,7 +94,7 @@ void GameState::update(const float &dt) {
     else {
         if(!miniMapOpen) {
             mainMenuBTN->update(mousePos);
-            inventory.update(*player, mousePos, groundItems);
+            player->getInventory().update(*player, mousePos);
             health->update(view, player->getHealth());
             if(mainMenuBTN->isPressed()) {
                 auto tmp=std::move(states->top());
@@ -114,7 +121,7 @@ void GameState::render(sf::RenderTarget &target) {
         if(miniMapOpen)
             renderMiniMap(target);
         else {
-            inventory.render(target);
+            player->getInventory().render(target);
             mainMenuBTN->render(target);
         }
     }
@@ -261,57 +268,4 @@ void GameState::Bar::update(const sf::View &currentView, float width) {
 void GameState::Bar::render(sf::RenderTarget &target) {
     target.draw(container);
     target.draw(bar);
-}
-
-GameState::Inventory::Inventory():size(32) {
-    background.setSize(sf::Vector2f(600,320));
-    background.setFillColor(sf::Color(0,0,0,100));
-    for(int i=0;i<size;i++)
-        containers.emplace_back();
-    for(auto& i:containers) {
-        i.setFillColor(sf::Color(224,224,224,100));
-        i.setSize(sf::Vector2f(64,64));
-    }
-}
-
-void GameState::Inventory::updatePosition(sf::Vector2f viewPos) {
-    background.setPosition(viewPos.x+100,viewPos.y+55);
-    int sizeX=background.getSize().x/containers[0].getSize().x-1;
-    int sizeY=background.getSize().y/containers[0].getSize().y-1;
-    for(int i=0;i<sizeX;i++)
-        for(int j=0;j<sizeY;j++)
-            containers[i*sizeY+j].setPosition(viewPos.x+110+i*74,viewPos.y+65+j*74);
-    int i=0;
-    for(auto& item:items) {
-        item->setPosition(containers[i++].getPosition());
-    }
-}
-
-void GameState::Inventory::render(sf::RenderTarget &target) {
-    target.draw(background);
-    for(const auto& container:containers)
-        target.draw(container);
-    if(!items.empty()) {
-        auto item = items.end();
-        item--;
-        while (item != items.begin()) {
-            (*item)->render(target);
-            item--;
-        }
-        (*item)->render(target);
-    }
-}
-
-std::list<std::unique_ptr<Item>> &GameState::Inventory::getItems() {
-    return items;
-}
-
-void GameState::Inventory::update(PlayableCharacter &_player, sf::Vector2f mousePos,
-                                  std::list<std::unique_ptr<Item>> &ground_items) {
-    auto item=items.begin();
-    while(item!=items.end()){
-        auto nextItem=++item;
-        (*(--item))->update(_player, mousePos, ground_items, items);
-        item=nextItem;;
-    }
 }

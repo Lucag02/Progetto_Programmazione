@@ -6,7 +6,9 @@
 #define PROGETTO_PROGRAMMAZIONE_PLAYABLECHARACTER_H
 #include "GameCharacter.h"
 #include "Hitbox.h"
+#include "Inventory.h"
 
+class Inventory;
 enum AbilityType:int {THUNDER=0,THUNDER_STORM};
 class PlayableCharacter: public GameCharacter{
 public:
@@ -34,10 +36,13 @@ public:
     std::list<std::unique_ptr<Projectile>> projectiles;
     std::list<std::unique_ptr<Projectile>>& getProjectiles();
     AnimationName getAnimation();
+    Hitbox & getHitbox() override;
     void increaseSpeed(float speedIncrease);
     void equipAbility(AbilityType newAbility);
+    Inventory& getInventory();
     ~PlayableCharacter() override;
 private:
+    std::unique_ptr<Inventory>inventory;
     float maxMana;
     bool dead;
     CharacterType type;

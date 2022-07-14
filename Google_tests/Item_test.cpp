@@ -25,7 +25,6 @@ protected:
 
 TEST_F(ItemTest, itemPickUp){
     player->setPosition(0,0);
-    (*groundItems.begin())->update(*player,sf::Vector2f(0,0),groundItems,inventory);
-    ASSERT_EQ(groundItems.size(),0);
-    ASSERT_EQ(inventory.size(),2);
+    (*groundItems.begin())->update(*player, sf::Vector2f(0, 0));
+    ASSERT_FALSE((*groundItems.begin())->isOnGround());
 }
