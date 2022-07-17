@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "Item.h"
 #include "Button.h"
+#include "Achievement.h"
 class GameState: public States {
 private:
 
@@ -44,6 +45,7 @@ private:
     bool miniMapOpen;
     const static float keyTime;
     float keyTimer;
+    std::unique_ptr<Achievement> achievements;
     void loadTextures();
     void createMiniMap();
     void updateMiniMap();

@@ -36,10 +36,8 @@ void Item::update(PlayableCharacter &player, sf::Vector2f mousePos) {
     }
     if(shape.getGlobalBounds().contains(mousePos)) {
         showText = true;
-        if(!onGround && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if(!onGround && sf::Mouse::isButtonPressed(sf::Mouse::Left))
             use(player);
-            used=true;
-        }
     }
     else
         showText=false;
@@ -52,6 +50,7 @@ void Item::render(sf::RenderTarget &target) {
 }
 
 void Item::use(PlayableCharacter &player) {
+    used=true;
     switch(type){
         case(ItemType::HEALING_POTION):
             player.heal(50);

@@ -9,7 +9,7 @@ PlayableCharacter::PlayableCharacter(ResourceManager &resources, std::vector<Res
                                                         GameCharacter(resources, x, y, HP, m, movespeed, manaregen),
                                                         animationLock(false), hardLock(false),stamina(stamina),maxStamina(stamina),dead(false),
                                                         maxHP(HP),ability(THUNDER),abilityResources(abilityResources),type(type),maxMana(m),
-                                                        inventory(std::make_unique<Inventory>()){
+                                                        inventory(std::make_unique<Inventory>()),spellsCast(0),monstersKilled(0){
     animation=AnimationName::IDLE;
     lockAnimation=AnimationName::IDLE;
     switch(type) {
@@ -117,6 +117,7 @@ void PlayableCharacter::update(const float &dt, sf::Vector2f mousePos) {
             projectiles.emplace_back(std::make_unique<Projectile>(abilityResources[ability], mousePos,
                                                                   sprite.getPosition().x, sprite.getPosition().y));
             mana -= 70;
+            spellsCast++;
         }
     }
     else if(resources.getAnimation(AnimationName::DEATH).isPlaying())
@@ -132,13 +133,14 @@ void PlayableCharacter::update(const float &dt, sf::Vector2f mousePos) {
         else
             projectile++;
     }
+    notifyObserver(dt);
 }
 
 void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
     for(auto& projectile:projectiles)
         projectile->render(target);
-
+    renderObservers(target);
 #if DEBUG
     target.draw(*hitbox);
     if(damageActive)
@@ -234,5 +236,28 @@ Inventory &PlayableCharacter::getInventory() {
 
 PlayableCharacter::~PlayableCharacter() {
 
+}
+
+void PlayableCharacter::registerObserver(Observer *o) {
+    observers.push_back(o);
+}
+
+void PlayableCharacter::notifyObserver(const float &dt) {
+    for (auto &observer: observers)
+        observer->update(dt, sf::Vector2f(sprite.getPosition().x - 400, sprite.getPosition().y - 225),
+                         monstersKilled, spellsCast);
+}
+
+void PlayableCharacter::removeObservers(Observer *o) {
+    observers.remove(o);
+}
+
+void PlayableCharacter::renderObservers(sf::RenderTarget &target) {
+    for(auto& observer:observers)
+        observer->render(target);
+}
+
+void PlayableCharacter::addKill() {
+    monstersKilled++;
 }
 

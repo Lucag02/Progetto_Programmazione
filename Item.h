@@ -19,10 +19,10 @@ private:
     bool onGround;
     bool showText;
     bool used;
-    void use(PlayableCharacter& player);
 public:
     static const int numItems=3;
     Item(const sf::Texture &texture, const sf::Font &font, float x = 0, float y = 0, int type = 0);
+    void use(PlayableCharacter& player);
     void update(PlayableCharacter &player, sf::Vector2f mousePos);
     void render(sf::RenderTarget& target);
     void setPosition(sf::Vector2f pos);

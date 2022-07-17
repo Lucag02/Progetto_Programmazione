@@ -52,5 +52,5 @@ TEST_F(MapTest,pathFinding){
     map->updateDistanceValues();
     enemy.setDirection(map->getDiredctionToPlayer(enemy.getPosition().x/map->tileWidth,enemy.getPosition().y/map->tileHeight));
     enemy.update(0.01,*player);
-    ASSERT_EQ(enemy.distanceToPlayer(player->getPosition()),79);
+    ASSERT_TRUE(enemy.distanceToPlayer(player->getPosition())>78.9&&enemy.distanceToPlayer(player->getPosition())<79.1);
 }

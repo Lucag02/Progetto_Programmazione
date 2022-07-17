@@ -7,14 +7,18 @@
 #include "GameCharacter.h"
 #include "Hitbox.h"
 #include "Inventory.h"
-
+#include "Subject.h"
 class Inventory;
 enum AbilityType:int {THUNDER=0,THUNDER_STORM};
-class PlayableCharacter: public GameCharacter{
+class PlayableCharacter: public GameCharacter,public Subject{
 public:
     explicit PlayableCharacter(ResourceManager &resources, std::vector<ResourceManager> &abilityResources,CharacterType type=KNIGHT,
                                float x = 0, float y = 0, int HP = 300, int m = 200, int stamina = 200,float movespeed = 150,
                                float manaregen = 0.1);
+    void registerObserver(Observer* o) override;
+    void notifyObserver(const float &dt) override;
+    void removeObservers(Observer* o) override;
+    void renderObservers(sf::RenderTarget& target);
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
     bool isAnimationPlaying();
@@ -40,9 +44,13 @@ public:
     void increaseSpeed(float speedIncrease);
     void equipAbility(AbilityType newAbility);
     Inventory& getInventory();
+    void addKill();
     ~PlayableCharacter() override;
 private:
     std::unique_ptr<Inventory>inventory;
+    std::list<Observer*> observers;
+    int monstersKilled;
+    int spellsCast;
     float maxMana;
     bool dead;
     CharacterType type;

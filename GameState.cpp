@@ -23,7 +23,7 @@ GameState::GameState(std::stack<std::unique_ptr<States>> *states, sf::RenderWind
     background.setSize(view.getSize());
     background.setFillColor(sf::Color(0,0,0,100));
     mainMenuBTN=std::make_unique<Button>(325.f,450.f,150.f,50.f,"Main Menu",font);
-
+    achievements=std::make_unique<Achievement>(font,&(*player));
 }
 
 void GameState::update(const float &dt) {
@@ -63,6 +63,7 @@ void GameState::update(const float &dt) {
                 if(rand()%5==1)
                     groundItems.emplace_back(std::make_unique<Item>(tileMap,font,(*enemy)->getPosition().x,(*enemy)->getPosition().y,rand()%Item::numItems));
                 enemies.erase(enemy);
+                player->addKill();
             }
             enemy=nextEnemy;
         }
