@@ -18,7 +18,6 @@ public:
     void registerObserver(Observer* o) override;
     void notifyObserver(const float &dt) override;
     void removeObservers(Observer* o) override;
-    void renderObservers(sf::RenderTarget& target);
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
     bool isAnimationPlaying();

@@ -117,6 +117,7 @@ void GameState::render(sf::RenderTarget &target) {
     health->render(target);
     stamina->render(target);
     mana->render(target);
+    achievements->render(target);
     if(paused) {
         target.draw(background);
         if(miniMapOpen)

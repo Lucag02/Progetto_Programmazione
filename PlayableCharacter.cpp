@@ -140,7 +140,6 @@ void PlayableCharacter::render(sf::RenderTarget &target) {
     target.draw(sprite);
     for(auto& projectile:projectiles)
         projectile->render(target);
-    renderObservers(target);
 #if DEBUG
     target.draw(*hitbox);
     if(damageActive)
@@ -250,11 +249,6 @@ void PlayableCharacter::notifyObserver(const float &dt) {
 
 void PlayableCharacter::removeObservers(Observer *o) {
     observers.remove(o);
-}
-
-void PlayableCharacter::renderObservers(sf::RenderTarget &target) {
-    for(auto& observer:observers)
-        observer->render(target);
 }
 
 void PlayableCharacter::addKill() {
