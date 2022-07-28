@@ -8,7 +8,6 @@
 #include "Hitbox.h"
 #include "Inventory.h"
 #include "Subject.h"
-class Inventory;
 enum AbilityType:int {THUNDER=0,THUNDER_STORM};
 class PlayableCharacter: public GameCharacter,public Subject{
 public:
@@ -20,7 +19,7 @@ public:
     void removeObservers(Observer* o) override;
     bool isAnimationLocked() const;
     void setAnimationLock(bool lock);
-    bool isAnimationPlaying();
+    bool isAnimationPlaying() const;
     void update(const float &dt, sf::Vector2f mousePos);
     void render(sf::RenderTarget& target) override;
     void setPosition(float x, float y);
@@ -32,17 +31,17 @@ public:
     int getHealth() const;
     int getStamina() const;
     void getHit(int damage);
-    float getMana();
+    float getMana() const;
     void heal(int heal);
     AbilityType ability;
     std::vector<ResourceManager>& abilityResources;
     std::list<std::unique_ptr<Projectile>> projectiles;
     std::list<std::unique_ptr<Projectile>>& getProjectiles();
     AnimationName getAnimation();
-    Hitbox & getHitbox() override;
+    Hitbox & getHitbox() const override;
     void increaseSpeed(float speedIncrease);
     void equipAbility(AbilityType newAbility);
-    Inventory& getInventory();
+    Inventory& getInventory() const;
     void addKill();
     ~PlayableCharacter() override;
 private:

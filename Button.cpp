@@ -34,7 +34,7 @@ void Button::render(sf::RenderTarget &target) {
     target.draw(button);
     target.draw(text);
 }
-bool Button::isPressed() {
+bool Button::isPressed() const{
     if(btnState==PRESSED)
         return true;
     return false;
@@ -44,7 +44,7 @@ void Button::setText(const sf::Text &title) {
     text=title;
 }
 
-sf::Text Button::getText() {
+sf::Text Button::getText() const{
     return text;
 }
 

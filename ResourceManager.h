@@ -16,11 +16,10 @@ public:
     ResourceManager();
     void addTexture(const std::string& name,const std::string& filepath);
     const sf::Texture& getTexture(const std::string& name) const;
-    void
-    addAnimation(AnimationName animationName, int width, int height, int startX, int startY, int endX, int endY,
+    void addAnimation(AnimationName animationName, int width, int height, int startX, int startY, int endX, int endY,
                  float animationTimer, bool repeatable= true);
     void playAnimation(AnimationName name, const float& dt, sf::Sprite& sprite);
-    const Animation & getAnimation(AnimationName animationName);
+    const Animation & getAnimation(AnimationName animationName) const;
 };
 
 #endif //PROGETTO_PROGRAMMAZIONE_RESOURCEMANAGER_H

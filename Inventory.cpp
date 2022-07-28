@@ -3,7 +3,7 @@
 //
 
 #include "Inventory.h"
-
+#include "PlayableCharacter.h"
 Inventory::Inventory(int size) : size(size) {
     background.setSize(sf::Vector2f(600, 320));
     background.setFillColor(sf::Color(0, 0, 0, 100));
@@ -61,10 +61,10 @@ void Inventory::add(std::unique_ptr<Item> item) {
     items.emplace_back(std::move(item));
 }
 
-int Inventory::getMaxSize() {
+int Inventory::getMaxSize() const {
     return size;
 }
 
-int Inventory::getCurrentSize() {
+int Inventory::getCurrentSize() const{
     return items.size();
 }

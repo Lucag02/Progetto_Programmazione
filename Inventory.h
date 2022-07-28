@@ -5,9 +5,6 @@
 #ifndef PROGETTO_PROGRAMMAZIONE_INVENTORY_H
 #define PROGETTO_PROGRAMMAZIONE_INVENTORY_H
 #include "Item.h"
-#include "PlayableCharacter.h"
-class PlayableCharacter;
-class Item;
 class Inventory{
 private:
     int size;
@@ -16,8 +13,8 @@ private:
     std::list<std::unique_ptr<Item>> items;
 public:
     explicit Inventory(int size=32);
-    int getMaxSize();
-    int getCurrentSize();
+    int getMaxSize() const;
+    int getCurrentSize() const;
     void updatePosition(sf::Vector2f viewPos);
     void update(PlayableCharacter &player, sf::Vector2f mousePos);
     void render(sf::RenderTarget& target);

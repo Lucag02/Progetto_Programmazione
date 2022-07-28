@@ -49,7 +49,7 @@ void Projectile::explode() {
     exploded=true;
 }
 
-Hitbox &Projectile::getHitbox() {
+Hitbox &Projectile::getHitbox() const{
     return *hitbox;
 }
 

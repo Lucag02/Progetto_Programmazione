@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <list>
 #include <memory>
-#include "PlayableCharacter.h"
+
 class PlayableCharacter;
 class Item {
 private:
@@ -26,8 +26,8 @@ public:
     void update(PlayableCharacter &player, sf::Vector2f mousePos);
     void render(sf::RenderTarget& target);
     void setPosition(sf::Vector2f pos);
-    bool isUsed();
-    bool isOnGround();
+    bool isUsed() const;
+    bool isOnGround() const;
     void setScale(sf::Vector2f scale);
 };
 #endif //PROGETTO_PROGRAMMAZIONE_ITEM_H

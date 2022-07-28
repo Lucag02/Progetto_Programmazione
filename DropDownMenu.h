@@ -11,7 +11,7 @@ public:
                  std::vector<std::string> list);
     void update(const sf::Vector2f &mousePos, const float &dt);
     void render(sf::RenderTarget &target);
-    std::string getActiveString();
+    std::string getActiveString() const;
 private:
     bool open;
     float x;

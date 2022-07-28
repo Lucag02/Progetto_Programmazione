@@ -12,6 +12,6 @@ void GameCharacter::undoMove() {
     sprite.setPosition(prevPos);
 }
 
-Hitbox& GameCharacter::getHitbox() {
+Hitbox& GameCharacter::getHitbox() const{
     return *hitbox;
 }

@@ -46,6 +46,6 @@ void DropDownMenu::render(sf::RenderTarget &target) {
 
 }
 
-std::string DropDownMenu::getActiveString() {
+std::string DropDownMenu::getActiveString() const {
     return activeBTN.getText().getString();
 }

@@ -157,7 +157,7 @@ void PlayableCharacter::setAnimationLock(bool lock) {
     hardLock=lock;
 }
 
-bool PlayableCharacter::isAnimationPlaying() {
+bool PlayableCharacter::isAnimationPlaying() const{
     return resources.getAnimation(animation).isPlaying();
 }
 
@@ -213,7 +213,7 @@ std::list<std::unique_ptr<Projectile>>& PlayableCharacter::getProjectiles() {
     return projectiles;
 }
 
-Hitbox &PlayableCharacter::getHitbox() {
+Hitbox &PlayableCharacter::getHitbox() const {
     return GameCharacter::getHitbox();
 }
 
@@ -221,7 +221,7 @@ void PlayableCharacter::equipAbility(AbilityType newAbility) {
     ability=newAbility;
 }
 
-float PlayableCharacter::getMana() {
+float PlayableCharacter::getMana() const {
     return mana;
 }
 
@@ -229,7 +229,7 @@ AnimationName PlayableCharacter::getAnimation() {
     return animation;
 }
 
-Inventory &PlayableCharacter::getInventory() {
+Inventory &PlayableCharacter::getInventory() const{
     return *inventory;
 }
 

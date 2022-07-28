@@ -3,6 +3,7 @@
 //
 
 #include "Item.h"
+#include "PlayableCharacter.h"
 Item::Item(const sf::Texture &texture, const sf::Font &font, float x, float y, int type)
         : type(static_cast<ItemType>(type)), onGround(true), showText(false), used(false) {
     shape.setPosition(x,y);
@@ -68,11 +69,11 @@ void Item::setPosition(sf::Vector2f pos) {
     shape.setPosition(pos);
 }
 
-bool Item::isUsed() {
+bool Item::isUsed() const {
     return used;
 }
 
-bool Item::isOnGround() {
+bool Item::isOnGround() const {
     return onGround;
 }
 

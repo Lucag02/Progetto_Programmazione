@@ -18,13 +18,13 @@ protected:
 public:
     Button(float x, float y, float width, float height, const std::string& title, const sf::Font &font);
     void setText(const sf::Text &title);
-    sf::Text getText();
+    sf::Text getText() const;
     void setTextPos(float x, float y);
     void setPosition(sf::Vector2f pos);
     const sf::Vector2f& getTextPos();
     void update(const sf::Vector2f &mousePos);
     void render(sf::RenderTarget &target);
-    bool isPressed();
+    bool isPressed() const;
 };
 
 

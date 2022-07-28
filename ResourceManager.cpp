@@ -24,6 +24,6 @@ ResourceManager::addAnimation(AnimationName animationName, int width, int height
     animations.insert({animationName, Animation(startX, startY, endX, endY, width, height, animationTimer, repeatable)});
 }
 
-const Animation & ResourceManager::getAnimation(AnimationName animationName) {
+const Animation & ResourceManager::getAnimation(AnimationName animationName) const{
     return animations.at(animationName);
 }

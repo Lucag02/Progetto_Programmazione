@@ -60,7 +60,7 @@ public:
     void createMap();
     void placeRooms();
     void createCorridors(const Room &room1, const Room &room2);
-    const std::vector<std::vector<Tile>>& getMap();
+    const std::vector<std::vector<Tile>>& getMap() const;
     sf::Vector2i getMapSize() const;
     sf::Vector2i getDiredctionToPlayer(float x, float y);
     int getTileWidth() const;

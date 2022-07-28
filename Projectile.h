@@ -22,7 +22,7 @@ public:
     Projectile(const ResourceManager &resources, sf::Vector2f mousePos, float x, float y);
     void update(const float& dt);
     void render(sf::RenderTarget& target);
-    Hitbox& getHitbox();
+    Hitbox& getHitbox() const;
     void explode();
     bool canErase() const;
 };

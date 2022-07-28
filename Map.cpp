@@ -248,7 +248,7 @@ sf::Vector2i Map::getDiredctionToPlayer(float x, float y) {
     return direction;
 }
 
-const std::vector<std::vector<Map::Tile>> &Map::getMap() {
+const std::vector<std::vector<Map::Tile>> &Map::getMap() const{
     return map;
 }
 

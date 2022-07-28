@@ -28,7 +28,7 @@ public:
     void setDirection(const sf::Vector2i &dir);
     void checkCollisionWithPlayer(PlayableCharacter &player);
     bool isDead() const;
-    bool isDying();
+    bool isDying() const;
     sf::Vector2f getPosition() const;
 };
 

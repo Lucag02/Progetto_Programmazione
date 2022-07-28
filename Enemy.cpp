@@ -134,7 +134,7 @@ void Enemy::setDirection(const sf::Vector2i &dir) {
     direction=dir;
 }
 
-bool Enemy::checkTimer() {
+bool Enemy::checkTimer(){
     return timer>moveTime;
 }
 
@@ -163,7 +163,7 @@ bool Enemy::isDead() const {
     return dead;
 }
 
-bool Enemy::isDying() {
+bool Enemy::isDying() const{
     return resources.getAnimation(AnimationName::DEATH).isPlaying();
 }
 
